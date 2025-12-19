@@ -37,15 +37,28 @@ export type StaticPage = {
 };
 
 export type RelatedConcept = {
-  term: string;
-  slug: string;
+  term?: string;
+  slug?: string;
+  title?: string;
+  name?: string;
 };
 
 export type Concept = {
   _id: string;
   term: string;
   slug: string;
+  title?: string;
+  name?: string;
+  label?: string;
   shortDefinition?: string;
+  summary?: string;
+  definition?: string;
+  whatItIs?: string;
+  whatIsText?: string;
+  what_is?: string;
+  whatItIsNot?: string;
+  whatNotText?: string;
+  what_is_not?: string;
   fullDefinition?: PortableTextBlock[];
   relatedConcepts?: RelatedConcept[];
 };
@@ -67,7 +80,8 @@ export type TimelineEvent = {
   _id: string;
   title: string;
   slug: string;
-  date: string;
+  date?: string;
+  year?: number;
   dateFormatted?: string;
   summary?: string;
   body?: PortableTextBlock[];

@@ -59,5 +59,51 @@ const meta = {
     </main>
     <Footer siteTitle={settings?.title ?? 'Reflexive Coherence Lab'} />
     <CookieBanner />
+    <script is:inline>
+      (() => {
+        if (typeof document === 'undefined') return;
+
+        const storageKey = 'cm-theme';
+        const root = document.documentElement;
+
+        const getCurrentTheme = () => (root.classList.contains('dark') ? 'dark' : 'light');
+
+        const syncToggles = (theme) => {
+          const isDark = theme === 'dark';
+          document.querySelectorAll('[data-theme-toggle]').forEach((btn) => {
+            btn.setAttribute('data-theme', theme);
+            btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+            const label = btn.querySelector('[data-theme-label]');
+            if (label) label.textContent = isDark ? 'Dark' : 'Light';
+          });
+        };
+
+        const setTheme = (theme) => {
+          const isDark = theme === 'dark';
+          root.classList.toggle('dark', isDark);
+          syncToggles(theme);
+          try {
+            localStorage.setItem(storageKey, theme);
+          } catch (error) {}
+        };
+
+        const init = () => {
+          syncToggles(getCurrentTheme());
+
+          document.querySelectorAll('[data-theme-toggle]').forEach((btn) => {
+            btn.addEventListener('click', () => {
+              const next = getCurrentTheme() === 'dark' ? 'light' : 'dark';
+              setTheme(next);
+            });
+          });
+        };
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', init);
+        } else {
+          init();
+        }
+      })();
+    </script>
   </body>
 </html>

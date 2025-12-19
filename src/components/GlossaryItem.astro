@@ -2,28 +2,23 @@
 import type { Concept } from '../lib/types';
 import RichTextRenderer from './RichTextRenderer';
 
-const { concept } = Astro.props as { concept: Concept };
+type GlossaryConcept = Concept & {
+  summary?: string;
+  definition?: string;
+  what_is?: string;
+  whatIsText?: string;
+  whatNotText?: string;
+};
 
-const term = concept.term ?? concept.title ?? concept.name ?? '';
-const slug = concept.slug ?? (term ? term.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9\-]/g, '') : '');
+const { concept } = Astro.props as { concept: GlossaryConcept };
 
-const short =
-  concept.shortDefinition ??
-  (concept as any).summary ??
-  (concept as any).definition ??
-  '';
+const term = concept.term || concept.title || concept.name || concept.label || '';
+const slug = concept.slug || (term ? term.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9\-]/g, '') : '');
 
-const whatItIs =
-  (concept as any).whatItIs ??
-  (concept as any).what_is ??
-  (concept as any).whatIsText ??
-  '';
+const short = concept.shortDefinition ?? concept.summary ?? concept.definition ?? '';
 
-const whatItIsNot =
-  (concept as any).whatItIsNot ??
-  (concept as any).what_is_not ??
-  (concept as any).whatNotText ??
-  '';
+const whatItIs = concept.whatItIs ?? concept.what_is ?? concept.whatIsText ?? '';
+const whatItIsNot = concept.whatItIsNot ?? concept.what_is_not ?? concept.whatNotText ?? '';
 
 const related = concept.relatedConcepts ?? [];
 ---
@@ -78,7 +73,7 @@ const related = concept.relatedConcepts ?? [];
 
   {related?.length ? (
     <p class="pt-4 text-sm text-slate-600 dark:text-white/70">
-      Related: {related.map((r) => (r.term ?? (r as any).title ?? (r as any).name)).join(', ')}
+      Related: {related.map((r) => r.term ?? r.title ?? r.name ?? '').filter(Boolean).join(', ')}
     </p>
   ) : null}
 </article>

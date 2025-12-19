@@ -3,8 +3,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PageTitle from '../components/PageTitle.astro';
 import TimelineItem from '../components/TimelineItem.astro';
 import { getTimeline } from '../lib/sanityQueries';
+import type { TimelineEvent } from '../lib/types';
 
-const eventsRaw = (await getTimeline()) ?? [];
+const eventsRaw = ((await getTimeline()) ?? []) as TimelineEvent[];
 
 const seo = {
   title: 'Timeline — CoherenceMind',
@@ -13,8 +14,8 @@ const seo = {
 };
 
 // Helpers
-const getYear = (event) => {
-  if (event?.year) return Number(event.year);
+const getYear = (event: TimelineEvent): number | null => {
+  if (typeof event?.year === 'number') return event.year;
   if (event?.date) {
     const d = new Date(event.date);
     const y = d.getFullYear();
@@ -27,23 +28,32 @@ const START_YEAR = 2022;
 const END_YEAR = 2025;
 
 // Keep only events with a valid year inside range
-const events = eventsRaw
+type TimelineEventWithYear = TimelineEvent & { __year: number };
+
+const events: TimelineEventWithYear[] = eventsRaw
   .map((ev) => ({ ...ev, __year: getYear(ev) }))
-  .filter((ev) => ev.__year && ev.__year >= START_YEAR && ev.__year <= END_YEAR);
+  .filter((ev): ev is TimelineEventWithYear => {
+    const year = ev.__year;
+    return typeof year === 'number' && year >= START_YEAR && year <= END_YEAR;
+  });
 
 // Group events by year (descending)
-const groups = Object.values(
-  events.reduce((acc, ev) => {
-    const y = ev.__year;
-    acc[y] ??= { year: y, items: [] };
-    acc[y].items.push(ev);
-    return acc;
-  }, {})
-).sort((a, b) => b.year - a.year);
+type TimelineGroup = { year: number; items: TimelineEventWithYear[] };
+
+const groupsMap = events.reduce<Record<number, TimelineGroup>>((acc, ev) => {
+  const year = ev.__year;
+  if (!acc[year]) {
+    acc[year] = { year, items: [] };
+  }
+  acc[year].items.push(ev);
+  return acc;
+}, {});
+
+const groups: TimelineGroup[] = Object.values(groupsMap).sort((a, b) => b.year - a.year);
 
 // Optional: ensure stable order inside each year if there is a date
-for (const g of groups) {
-  g.items.sort((a, b) => {
+for (const group of groups) {
+  group.items.sort((a, b) => {
     const ad = a?.date ? new Date(a.date).getTime() : 0;
     const bd = b?.date ? new Date(b.date).getTime() : 0;
     return bd - ad; // most recent first within year

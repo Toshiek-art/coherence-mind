@@ -1,10 +1,22 @@
 ---
+import type { PortableTextBlock } from '@portabletext/types';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageTitle from '../components/PageTitle.astro';
 import GlossaryItem from '../components/GlossaryItem.astro';
 import { getGlossary } from '../lib/sanityQueries';
+import type { Concept, RelatedConcept } from '../lib/types';
 
-const glossary = (await getGlossary()) ?? [];
+type GlossaryConcept = Concept & {
+  summary?: string;
+  definition?: string;
+  what_is?: string;
+  whatIsText?: string;
+  whatNotText?: string;
+};
+
+type PortableChild = { text?: string };
+
+const glossary = ((await getGlossary()) ?? []) as GlossaryConcept[];
 
 const seo = {
   title: 'Glossary — CoherenceMind',
@@ -12,52 +24,40 @@ const seo = {
 };
 
 // Helpers (server-side)
-const normalize = (s = '') =>
+const normalize = (s = ''): string =>
   s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
 
-const getLabel = (concept) =>
-  (concept?.title ?? concept?.name ?? concept?.term ?? concept?.label ?? '').toString();
+const getLabel = (concept: GlossaryConcept): string =>
+  (concept.title ?? concept.name ?? concept.term ?? concept.label ?? '').toString();
 
 // Extract plain text from Portable Text blocks (for search indexing)
-const portableTextToPlain = (blocks) => {
+const portableTextToPlain = (blocks?: PortableTextBlock[]): string => {
   if (!Array.isArray(blocks)) return '';
   return blocks
-    .map((b) => {
-      if (!b) return '';
-      if (typeof b === 'string') return b;
-      if (b._type === 'block' && Array.isArray(b.children)) {
-        return b.children.map((c) => c?.text ?? '').join('');
+    .map((block) => {
+      if (!block) return '';
+      if (typeof block === 'string') return block;
+      const children = (block as PortableTextBlock & { children?: PortableChild[] }).children;
+      if (Array.isArray(children)) {
+        return children.map((child) => child?.text ?? '').join('');
       }
       return '';
     })
     .join(' ');
 };
 
-// Build searchable text blob per concept
-const getTextBlob = (concept) => {
+const getSearchFields = (concept: GlossaryConcept): string => {
   const title = getLabel(concept);
-  const summary = (concept?.shortDefinition ?? '').toString();
-  const body = portableTextToPlain(concept?.fullDefinition);
-  const related =
-    Array.isArray(concept?.relatedConcepts)
-      ? concept.relatedConcepts.map((r) => r?.term ?? '').join(' ')
-      : '';
+  const short = concept.shortDefinition ?? concept.summary ?? concept.definition ?? '';
+  const whatIs = concept.whatItIs ?? concept.what_is ?? concept.whatIsText ?? '';
+  const whatNot = concept.whatItIsNot ?? concept.what_is_not ?? concept.whatNotText ?? '';
+  const body = portableTextToPlain(concept.fullDefinition);
 
-  return normalize(`${title} ${summary} ${body} ${related}`);
-};
+  const related = Array.isArray(concept.relatedConcepts)
+    ? concept.relatedConcepts.map((r: RelatedConcept) => r?.term ?? r?.title ?? r?.name ?? '').join(' ')
+    : '';
 
-const getSearchFields = (concept) => {
-  const title = getLabel(concept);
-  const short = (concept?.shortDefinition ?? concept?.summary ?? concept?.definition ?? '').toString();
-  const whatIs = (concept?.whatItIs ?? concept?.what_is ?? concept?.whatIsText ?? '').toString();
-  const whatNot = (concept?.whatItIsNot ?? concept?.what_is_not ?? concept?.whatNotText ?? '').toString();
-
-  const related =
-    Array.isArray(concept?.relatedConcepts)
-      ? concept.relatedConcepts.map((r) => (r?.term ?? r?.title ?? r?.name ?? '')).join(' ')
-      : '';
-
-  return normalize(`${title} ${short} ${whatIs} ${whatNot} ${related}`);
+  return normalize(`${title} ${short} ${whatIs} ${whatNot} ${body} ${related}`);
 };
 
 // Build A–Z buckets
