@@ -1,0 +1,45 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageTitle from '../../components/PageTitle.astro';
+import RichTextRenderer from '../../components/RichTextRenderer';
+import { getNotes, getNotesBySlug } from '../../lib/sanityQueries';
+
+export async function getStaticPaths() {
+  const notes = await getNotes();
+  return (notes ?? []).map((note) => ({ params: { slug: note.slug }, props: { slug: note.slug } }));
+}
+
+const { slug } = Astro.params;
+const note = await getNotesBySlug(slug!);
+
+if (!note) {
+  return new Response('Not found', { status: 404 });
+}
+
+const seo = {
+  title: `${note.title} — Lab Note`,
+  description: note.tags?.length
+    ? `Themes: ${note.tags.join(', ')}`
+    : 'Field note from the Reflexive Coherence Model lab.',
+  canonicalUrl: new URL(
+    `/notes/${note.slug}`,
+    Astro.site ?? 'https://www.reflexivecoherencemodel.org'
+  ).toString()
+};
+---
+<BaseLayout seo={seo}>
+  <PageTitle
+    eyebrow="lab note"
+    title={note.title}
+    intro={new Date(note.createdAt).toLocaleDateString(undefined, { dateStyle: 'medium' })}
+  />
+  <section class="pb-20">
+    <div class="container">
+      {note.body ? (
+        <RichTextRenderer value={note.body} />
+      ) : (
+        <p class="text-white/70">Full text currently offline.</p>
+      )}
+    </div>
+  </section>
+</BaseLayout>

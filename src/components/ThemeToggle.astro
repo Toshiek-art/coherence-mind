@@ -1,0 +1,52 @@
+---
+const storageKey = 'cm-theme';
+---
+<button
+  type="button"
+  class="inline-flex items-center gap-2 rounded-full border border-slate-300 px-3 py-1 text-xs font-medium uppercase tracking-widest text-slate-700 transition hover:border-slate-400 hover:text-slate-900 dark:border-slate-700 dark:text-slate-300 dark:hover:border-slate-500 dark:hover:text-slate-100"
+  data-theme-toggle
+  aria-label="Toggle theme"
+>
+  <span class="relative inline-flex h-5 w-5 items-center justify-center">
+    <span class="sun h-3.5 w-3.5 rounded-full bg-amber-400 transition-opacity dark:opacity-0"></span>
+    <span class="moon absolute inset-0 flex items-center justify-center text-slate-100 opacity-0 transition-opacity dark:opacity-100">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" class="h-3.5 w-3.5">
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="1.5"
+          d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79Z"
+        />
+      </svg>
+    </span>
+  </span>
+  <span data-theme-label>Light</span>
+</button>
+<script is:inline>
+  (() => {
+    const storageKey = 'cm-theme';
+    const root = document.documentElement;
+    const toggle = document.querySelector('[data-theme-toggle]');
+    if (!toggle) return;
+
+    const setTheme = (theme) => {
+      const isDark = theme === 'dark';
+      root.classList.toggle('dark', isDark);
+      toggle.setAttribute('data-theme', theme);
+      const label = toggle.querySelector('[data-theme-label]');
+      if (label) label.textContent = isDark ? 'Dark' : 'Light';
+    };
+
+    const getCurrentTheme = () => (root.classList.contains('dark') ? 'dark' : 'light');
+
+    setTheme(getCurrentTheme());
+
+    toggle.addEventListener('click', () => {
+      const next = getCurrentTheme() === 'dark' ? 'light' : 'dark';
+      setTheme(next);
+      try {
+        localStorage.setItem(storageKey, next);
+      } catch (error) {}
+    });
+  })();
+</script>

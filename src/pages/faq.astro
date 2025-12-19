@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageTitle from '../components/PageTitle.astro';
+import RichTextRenderer from '../components/RichTextRenderer';
+import { getFaqByCategory } from '../lib/sanityQueries';
+
+const groups = await getFaqByCategory();
+const seo = {
+  title: 'FAQ — Reflexive Coherence',
+  description: 'Detailed answers about the theory, methodology, and applications.'
+};
+---
+<BaseLayout seo={seo}>
+  <PageTitle
+    eyebrow="clarity"
+    title="Frequently Asked Questions"
+    intro="Practical descriptions across philosophy, AI, and methodology contexts."
+  />
+  <section class="pb-20">
+    <div class="container space-y-12">
+      {groups?.length ? (
+        groups.map((group) => (
+          <article class="space-y-4" id={group.category.toLowerCase()}>
+            <h2 class="text-2xl font-semibold">{group.category}</h2>
+            <div class="space-y-6">
+              {group.items.map((faq) => (
+                <details class="rounded-2xl border border-white/10 bg-white/5 p-6" id={faq.slug}>
+                  <summary class="cursor-pointer text-lg font-semibold text-white">
+                    {faq.question}
+                  </summary>
+                  {faq.answer ? (
+                    <RichTextRenderer className="pt-4" value={faq.answer} />
+                  ) : (
+                    <p class="pt-4 text-white/70">Answer coming soon.</p>
+                  )}
+                </details>
+              ))}
+            </div>
+          </article>
+        ))
+      ) : (
+        <p class="text-white/70">Questions and answers will appear after the next research sprint.</p>
+      )}
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,15 @@
+---
+import type { BlogPostSummary } from '../lib/types';
+import BlogPostPreview from './BlogPostPreview.astro';
+const { posts = [] as BlogPostSummary[] } = Astro.props;
+---
+
+{posts.length ? (
+  <div id="blogList" class="grid gap-8 lg:grid-cols-3">
+    {posts.map((post: BlogPostSummary) => (
+      <BlogPostPreview post={post} />
+    ))}
+  </div>
+) : (
+  <p class="text-slate-600 dark:text-white/70">Articles are coming soon.</p>
+)}

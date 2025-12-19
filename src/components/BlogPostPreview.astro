@@ -1,0 +1,41 @@
+---
+import type { BlogPostSummary } from '../lib/types';
+const { post } = Astro.props as { post: BlogPostSummary };
+
+const normalize = (s = '') =>
+  s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+
+const tags = (post.tags ?? []).map((t) => String(t));
+const searchBlob = normalize(`${post.title ?? ''} ${post.excerpt ?? ''} ${tags.join(' ')}`);
+const tagsBlob = normalize(tags.join('|'));
+---
+
+<article
+  class="blog-card space-y-3 rounded-2xl border border-slate-200 bg-white/60 p-6 shadow-sm backdrop-blur transition hover:-translate-y-0.5 hover:bg-white dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
+  data-search={searchBlob}
+  data-tags={tagsBlob}
+>
+  <p class="text-xs font-semibold uppercase tracking-[0.28em] text-slate-500 dark:text-white/45">
+    {new Date(post.publishedAt).toLocaleDateString(undefined, { dateStyle: 'medium' })}
+  </p>
+
+  <h3 class="text-xl font-semibold text-slate-900 dark:text-white">
+    <a class="hover:text-slate-900 dark:hover:text-white" href={`/blog/${post.slug}`}>
+      {post.title}
+    </a>
+  </h3>
+
+  {post.excerpt && (
+    <p class="text-sm leading-relaxed text-slate-600 dark:text-white/70">{post.excerpt}</p>
+  )}
+
+  {post.tags?.length ? (
+    <div class="flex flex-wrap gap-2 pt-1">
+      {post.tags.map((tag) => (
+        <span class="rounded-full border border-slate-200 bg-white/70 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-600 dark:border-white/10 dark:bg-white/10 dark:text-white/70">
+          {tag}
+        </span>
+      ))}
+    </div>
+  ) : null}
+</article>

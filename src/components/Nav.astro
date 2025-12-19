@@ -1,0 +1,25 @@
+---
+import type { NavigationLink } from '../lib/types';
+const fallback = [
+  { _id: 'model', label: 'Model', href: '/model', order: 1 },
+  { _id: 'glossary', label: 'Glossary', href: '/glossary', order: 2 },
+  { _id: 'timeline', label: 'Timeline', href: '/timeline', order: 3 },
+  { _id: 'blog', label: 'Articles', href: '/blog', order: 4 }
+] satisfies NavigationLink[];
+const { links = [] as NavigationLink[] } = Astro.props;
+const navItems: NavigationLink[] = links.length ? links : fallback;
+---
+<nav aria-label="Primary">
+  <ul class="flex flex-wrap gap-4 text-sm uppercase tracking-widest text-slate-600 dark:text-slate-300">
+    {navItems.map((link) => (
+      <li>
+        <a
+          class="transition hover:text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500 dark:hover:text-slate-50"
+          href={link.href}
+        >
+          {link.label}
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>

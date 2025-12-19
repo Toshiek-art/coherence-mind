@@ -1,0 +1,199 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageTitle from '../../components/PageTitle.astro';
+import BlogPostList from '../../components/BlogPostList.astro';
+import { getBlogPosts } from '../../lib/sanityQueries';
+
+const posts = (await getBlogPosts()) ?? [];
+
+const seo = {
+  title: 'Articles — Reflexive Coherence',
+  description: 'Long-form writing about the Reflexive Coherence Model.'
+};
+
+// Build unique tag set (server-side)
+const tagSet = new Set<string>();
+for (const p of posts) (p?.tags ?? []).forEach((t) => tagSet.add(String(t)));
+const allTags = Array.from(tagSet).sort((a, b) => a.localeCompare(b));
+---
+
+<BaseLayout seo={seo}>
+  <PageTitle
+    eyebrow="articles"
+    title="Context & Clarifications"
+    intro="Occasional essays intended to clarify, contextualize, and delimit the Reflexive Coherence Model. These texts do not extend the model, but articulate its conceptual background and boundaries."
+  />
+
+  {/* Controls */}
+  <section class="pb-10">
+    <div class="container">
+      <div class="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-end">
+        <div>
+          <label for="blogSearch" class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-700 dark:text-white/70">
+            Search
+          </label>
+
+          <div class="flex items-center gap-2">
+            <input
+              id="blogSearch"
+              type="text"
+              placeholder="Search (e.g. reflexivity, RCI, substrate)…"
+              class="w-full rounded-2xl border border-slate-200 bg-white/60 px-4 py-3 text-sm text-slate-900 shadow-sm outline-none backdrop-blur placeholder:text-slate-400 focus:border-slate-300 dark:border-white/10 dark:bg-white/5 dark:text-white dark:placeholder:text-white/35 dark:focus:border-white/20"
+            />
+            <button
+              id="blogClear"
+              type="button"
+              class="hidden rounded-2xl border border-slate-200 bg-white/60 px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm backdrop-blur hover:bg-white dark:border-white/10 dark:bg-white/5 dark:text-white/80 dark:hover:bg-white/10"
+            >
+              Clear
+            </button>
+          </div>
+
+          <p class="mt-2 text-sm text-slate-600 dark:text-white/70">
+            <span id="blogCount">{posts.length}</span> articles
+            <span class="text-slate-400 dark:text-white/35"> · </span>
+            lab notes remain on the homepage.
+          </p>
+        </div>
+
+        {/* Tags */}
+        <div>
+          <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-700 dark:text-white/70">
+            Filter by tag
+          </p>
+
+          <div class="flex flex-wrap gap-2">
+            <button
+              type="button"
+              class="tag-chip rounded-full border border-slate-200 bg-white/50 px-3 py-1 text-xs font-semibold text-slate-700 shadow-sm hover:bg-white dark:border-white/10 dark:bg-white/5 dark:text-white/80 dark:hover:bg-white/10"
+              data-tag="__all__"
+            >
+              All
+            </button>
+
+            {allTags.map((t) => (
+              <button
+                type="button"
+                class="tag-chip rounded-full border border-slate-200 bg-white/50 px-3 py-1 text-xs font-semibold text-slate-700 shadow-sm hover:bg-white dark:border-white/10 dark:bg-white/5 dark:text-white/80 dark:hover:bg-white/10"
+                data-tag={t}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* List */}
+  <section class="pb-20">
+    <div class="container">
+      <BlogPostList posts={posts} />
+
+      {/* Home-only lab notes reminder */}
+      <div class="mt-12 rounded-3xl border border-slate-200 bg-white/50 p-6 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5">
+        <h2 class="text-base font-semibold text-slate-900 dark:text-white">
+          Lab notes
+        </h2>
+
+        <p class="mt-1 text-sm text-slate-600 dark:text-white/70">
+          Field records, sketches, and thought fragments from the reflexive coherence lab.
+        </p>
+
+        <div class="mt-4 flex flex-wrap gap-2">
+          <a
+            href="/notes"
+            class="inline-flex items-center rounded-full border border-slate-200 bg-white/70 px-3 py-1 text-xs font-semibold text-slate-700 hover:bg-white dark:border-white/10 dark:bg-white/10 dark:text-white/80 dark:hover:bg-white/15"
+          >
+            Open Notes →
+          </a>
+
+          <a
+            href="/model"
+            class="inline-flex items-center rounded-full border border-slate-200 bg-white/70 px-3 py-1 text-xs font-semibold text-slate-700 hover:bg-white dark:border-white/10 dark:bg-white/10 dark:text-white/80 dark:hover:bg-white/15"
+          >
+            Back to Model →
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  {/* Client-side search + tag filter */}
+  <script is:inline>
+    {String.raw`
+      (function () {
+        const input = document.getElementById('blogSearch');
+        const clearBtn = document.getElementById('blogClear');
+        const countEl = document.getElementById('blogCount');
+        const list = document.getElementById('blogList');
+        const chips = Array.from(document.querySelectorAll('.tag-chip'));
+
+        if (!list || !countEl) return;
+
+        const cards = Array.from(list.querySelectorAll('.blog-card'));
+        let activeTag = '__all__';
+
+        const normalize = (s) =>
+          (s || '')
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .trim();
+
+        const setActiveChip = () => {
+          chips.forEach((c) => {
+            const isActive = (c.getAttribute('data-tag') || '__all__') === activeTag;
+            c.style.opacity = isActive ? '1' : '0.75';
+          });
+        };
+
+        const apply = () => {
+          const q = normalize(input?.value || '');
+          if (q.length) clearBtn?.classList.remove('hidden');
+          else clearBtn?.classList.add('hidden');
+
+          let visible = 0;
+
+          cards.forEach((card) => {
+            const hay = card.getAttribute('data-search') || '';
+            const tags = card.getAttribute('data-tags') || '';
+
+            const okSearch = !q || hay.includes(q);
+
+            const okTag =
+              activeTag === '__all__' ||
+              tags.includes(normalize(activeTag));
+
+            const show = okSearch && okTag;
+            card.style.display = show ? '' : 'none';
+            if (show) visible++;
+          });
+
+          countEl.textContent = String(visible);
+        };
+
+        chips.forEach((chip) => {
+          chip.addEventListener('click', () => {
+            activeTag = chip.getAttribute('data-tag') || '__all__';
+            setActiveChip();
+            apply();
+          });
+        });
+
+        input?.addEventListener('input', apply);
+        clearBtn?.addEventListener('click', () => {
+          if (!input) return;
+          input.value = '';
+          input.focus();
+          apply();
+        });
+
+        setActiveChip();
+        apply();
+      })();
+    `}
+  </script>
+</BaseLayout>

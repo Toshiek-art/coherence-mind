@@ -1,0 +1,16 @@
+---
+import Nav from './Nav.astro';
+import ThemeToggle from './ThemeToggle.astro';
+import type { NavigationLink } from '../lib/types';
+
+const { navigation = [] as NavigationLink[] } = Astro.props;
+---
+<header class="border-b border-slate-200/90 bg-white/80 text-slate-900 backdrop-blur dark:border-slate-800/80 dark:bg-ink/80 dark:text-slate-100">
+  <div class="container flex flex-wrap items-center justify-between gap-4 py-5">
+    <a class="text-lg font-semibold tracking-wide" href="/">Coherence Mind</a>
+    <div class="flex flex-wrap items-center gap-4">
+      <Nav links={navigation} />
+      <ThemeToggle />
+    </div>
+  </div>
+</header>

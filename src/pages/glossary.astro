@@ -1,0 +1,363 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageTitle from '../components/PageTitle.astro';
+import GlossaryItem from '../components/GlossaryItem.astro';
+import { getGlossary } from '../lib/sanityQueries';
+
+const glossary = (await getGlossary()) ?? [];
+
+const seo = {
+  title: 'Glossary — CoherenceMind',
+  description: 'Core vocabulary for the Reflexive Coherence Model.'
+};
+
+// Helpers (server-side)
+const normalize = (s = '') =>
+  s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+
+const getLabel = (concept) =>
+  (concept?.title ?? concept?.name ?? concept?.term ?? concept?.label ?? '').toString();
+
+// Extract plain text from Portable Text blocks (for search indexing)
+const portableTextToPlain = (blocks) => {
+  if (!Array.isArray(blocks)) return '';
+  return blocks
+    .map((b) => {
+      if (!b) return '';
+      if (typeof b === 'string') return b;
+      if (b._type === 'block' && Array.isArray(b.children)) {
+        return b.children.map((c) => c?.text ?? '').join('');
+      }
+      return '';
+    })
+    .join(' ');
+};
+
+// Build searchable text blob per concept
+const getTextBlob = (concept) => {
+  const title = getLabel(concept);
+  const summary = (concept?.shortDefinition ?? '').toString();
+  const body = portableTextToPlain(concept?.fullDefinition);
+  const related =
+    Array.isArray(concept?.relatedConcepts)
+      ? concept.relatedConcepts.map((r) => r?.term ?? '').join(' ')
+      : '';
+
+  return normalize(`${title} ${summary} ${body} ${related}`);
+};
+
+const getSearchFields = (concept) => {
+  const title = getLabel(concept);
+  const short = (concept?.shortDefinition ?? concept?.summary ?? concept?.definition ?? '').toString();
+  const whatIs = (concept?.whatItIs ?? concept?.what_is ?? concept?.whatIsText ?? '').toString();
+  const whatNot = (concept?.whatItIsNot ?? concept?.what_is_not ?? concept?.whatNotText ?? '').toString();
+
+  const related =
+    Array.isArray(concept?.relatedConcepts)
+      ? concept.relatedConcepts.map((r) => (r?.term ?? r?.title ?? r?.name ?? '')).join(' ')
+      : '';
+
+  return normalize(`${title} ${short} ${whatIs} ${whatNot} ${related}`);
+};
+
+// Build A–Z buckets
+const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+const buckets = letters.map((L) => ({
+  letter: L,
+  items: glossary
+    .filter((c) => {
+      const label = getLabel(c);
+      if (!label) return false;
+      const first = normalize(label).charAt(0).toUpperCase();
+      return first === L;
+    })
+    .sort((a, b) => getLabel(a).localeCompare(getLabel(b)))
+}));
+
+const misc = glossary
+  .filter((c) => {
+    const label = getLabel(c);
+    const first = normalize(label).charAt(0).toUpperCase();
+    return !letters.includes(first);
+  })
+  .sort((a, b) => getLabel(a).localeCompare(getLabel(b)));
+
+const initialCount = glossary.length;
+---
+
+<BaseLayout seo={seo}>
+  <PageTitle
+    eyebrow="language"
+    title="Glossary"
+    intro="Core vocabulary for the Reflexive Coherence Model — concise definitions with explicit boundaries."
+  />
+
+  {/* Search + meta */}
+  <section class="pb-8">
+    <div class="container">
+      <div class="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-end">
+        <div>
+          <label
+            for="glossarySearch"
+            class="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-700 dark:text-white/70"
+          >
+            Search
+          </label>
+
+          <div class="flex items-center gap-2">
+            <input
+              id="glossarySearch"
+              type="text"
+              placeholder="Search concepts (e.g. reflexive structure, RCI, causal closure)…"
+              class="w-full rounded-2xl border border-slate-200 bg-white/60 px-4 py-3 text-sm text-slate-900 shadow-sm outline-none backdrop-blur placeholder:text-slate-400 focus:border-slate-300 dark:border-white/10 dark:bg-white/5 dark:text-white dark:placeholder:text-white/35 dark:focus:border-white/20"
+            />
+            <button
+              id="glossaryClear"
+              type="button"
+              class="hidden rounded-2xl border border-slate-200 bg-white/60 px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm backdrop-blur hover:bg-white dark:border-white/10 dark:bg-white/5 dark:text-white/80 dark:hover:bg-white/10"
+            >
+              Clear
+            </button>
+          </div>
+
+          <p class="mt-2 text-sm text-slate-600 dark:text-white/70">
+            <span id="glossaryCount">{initialCount}</span> entries
+            <span class="text-slate-400 dark:text-white/35"> · </span>
+            grouped A–Z for quick scanning.
+          </p>
+        </div>
+
+        {/* Mobile A–Z chips */}
+        <div class="lg:hidden">
+          <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-700 dark:text-white/70">Jump</p>
+          <div class="flex flex-wrap gap-2">
+            {letters.map((L) => (
+              <a
+                href={`#gl-${L}`}
+                class="rounded-full border border-slate-200 bg-white/50 px-3 py-1 text-xs font-medium text-slate-700 shadow-sm hover:bg-white dark:border-white/10 dark:bg-white/5 dark:text-white/80 dark:hover:bg-white/10"
+              >
+                {L}
+              </a>
+            ))}
+            {misc.length ? (
+              <a
+                href="#gl-misc"
+                class="rounded-full border border-slate-200 bg-white/50 px-3 py-1 text-xs font-medium text-slate-700 shadow-sm hover:bg-white dark:border-white/10 dark:bg-white/5 dark:text-white/80 dark:hover:bg-white/10"
+              >
+                #
+              </a>
+            ) : null}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* Desktop layout: sticky A–Z + content */}
+  <section class="pb-20">
+    <div class="container">
+      <div class="grid gap-10 lg:grid-cols-[240px_1fr]">
+        {/* Sticky A–Z index (desktop only) */}
+        <aside class="hidden lg:block">
+          <div class="sticky top-24">
+            <div class="rounded-2xl border border-slate-200 bg-white/60 p-4 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5">
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-700 dark:text-white/70">
+                A–Z index
+              </p>
+              <div class="mt-3 grid grid-cols-6 gap-2">
+                {letters.map((L) => (
+                  <a
+                    href={`#gl-${L}`}
+                    class="flex h-9 items-center justify-center rounded-xl border border-slate-200 bg-white/60 text-xs font-semibold text-slate-700 shadow-sm hover:bg-white dark:border-white/10 dark:bg-white/5 dark:text-white/75 dark:hover:bg-white/10"
+                    aria-label={`Jump to ${L}`}
+                  >
+                    {L}
+                  </a>
+                ))}
+                {misc.length ? (
+                  <a
+                    href="#gl-misc"
+                    class="col-span-6 mt-2 flex h-9 items-center justify-center rounded-xl border border-slate-200 bg-white/60 text-xs font-semibold text-slate-700 shadow-sm hover:bg-white dark:border-white/10 dark:bg-white/5 dark:text-white/75 dark:hover:bg-white/10"
+                    aria-label="Jump to misc"
+                  >
+                    #
+                  </a>
+                ) : null}
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        {/* Content */}
+        <div id="glossaryRoot" class="space-y-10">
+          {glossary?.length ? (
+            <>
+              {buckets.map((b) =>
+                b.items.length ? (
+                  <section id={`gl-${b.letter}`} class="gl-section">
+                    <div class="mb-4 flex items-end justify-between gap-6">
+                      <h2 class="text-base font-semibold uppercase tracking-wide text-slate-700 dark:text-white/80">
+                        {b.letter}
+                      </h2>
+                      <p class="text-xs text-slate-500 dark:text-white/45">
+                        <span class="gl-count">{b.items.length}</span> entries
+                      </p>
+                    </div>
+
+                    <div class="grid gap-6 md:grid-cols-2">
+                      {b.items.map((concept) => (
+                        <div class="gl-item" data-search={getSearchFields(concept)}>
+                          <GlossaryItem concept={concept} />
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                ) : null
+              )}
+
+              {misc.length ? (
+                <section id="gl-misc" class="gl-section">
+                  <div class="mb-4 flex items-end justify-between gap-6">
+                    <h2 class="text-base font-semibold uppercase tracking-wide text-slate-700 dark:text-white/80">#</h2>
+                    <p class="text-xs text-slate-500 dark:text-white/45">
+                      <span class="gl-count">{misc.length}</span> entries
+                    </p>
+                  </div>
+
+                  <div class="grid gap-6 md:grid-cols-2">
+                    {misc.map((concept) => (
+                      <div class="gl-item" data-search={getSearchFields(concept)}>
+                        <GlossaryItem concept={concept} />
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              ) : null}
+            </>
+          ) : (
+            <div class="rounded-2xl border border-slate-200 bg-white/60 p-6 text-slate-600 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5 dark:text-white/70">
+              Glossary entries are being curated.
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* Client-side filter (tiny, no deps) */}
+  <script is:inline>
+    {String.raw`
+      (function () {
+        const input = document.getElementById('glossarySearch');
+        const clearBtn = document.getElementById('glossaryClear');
+        const countEl = document.getElementById('glossaryCount');
+        const root = document.getElementById('glossaryRoot');
+
+        if (!input || !root || !countEl) return;
+
+        const items = Array.from(root.querySelectorAll('.gl-item'));
+        const sections = Array.from(root.querySelectorAll('.gl-section'));
+
+        const normalize = (s) =>
+          (s || '')
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .trim();
+
+        const update = () => {
+          const q = normalize(input.value);
+          let visibleCount = 0;
+
+          if (q.length) {
+            clearBtn?.classList.remove('hidden');
+          } else {
+            clearBtn?.classList.add('hidden');
+          }
+
+          items.forEach((el) => {
+            const hay = el.getAttribute('data-search') || '';
+            const ok = !q || hay.includes(q);
+            el.style.display = ok ? '' : 'none';
+            if (ok) visibleCount++;
+          });
+
+          sections.forEach((sec) => {
+            const localItems = Array.from(sec.querySelectorAll('.gl-item'));
+            const localVisible = localItems.filter((n) => n.style.display !== 'none').length;
+
+            const countNode = sec.querySelector('.gl-count');
+            if (countNode) countNode.textContent = localVisible;
+
+            sec.style.display = localVisible ? '' : 'none';
+          });
+
+          countEl.textContent = String(visibleCount);
+        };
+
+        input.addEventListener('input', update);
+
+        if (clearBtn) {
+          clearBtn.addEventListener('click', () => {
+            input.value = '';
+            input.focus();
+            update();
+          });
+        }
+
+        update();
+      })();
+    `}
+  </script>
+
+  {/* Hash highlight + deep-link copy */}
+  <script is:inline>
+    {String.raw`
+      (function () {
+        const HIGHLIGHT_CLASS =
+          'ring-2 ring-slate-300/70 shadow-lg shadow-slate-200/60 dark:ring-white/20 dark:shadow-white/10';
+
+        const highlight = () => {
+          const id = (window.location.hash || '').slice(1);
+          if (!id) return;
+          const el = document.getElementById(id);
+          if (!el) return;
+
+          el.classList.add(...HIGHLIGHT_CLASS.split(' '));
+          try { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (_) {}
+
+          window.setTimeout(() => {
+            el.classList.remove(...HIGHLIGHT_CLASS.split(' '));
+          }, 1600);
+        };
+
+        window.addEventListener('hashchange', highlight);
+        window.addEventListener('load', highlight);
+
+        // Copy deep link for glossary items
+        document.addEventListener('click', async (e) => {
+          const btn = e.target && e.target.closest && e.target.closest('[data-copy-link]');
+          if (!btn) return;
+
+          const id = btn.getAttribute('data-copy-link');
+          if (!id) return;
+
+          const url = new URL(window.location.href);
+          url.hash = id;
+
+          try {
+            await navigator.clipboard.writeText(url.toString());
+            const prev = btn.textContent;
+            btn.textContent = 'Copied';
+            setTimeout(() => (btn.textContent = prev), 900);
+          } catch (_) {
+            window.location.hash = id;
+            const prev = btn.textContent;
+            btn.textContent = 'Pinned';
+            setTimeout(() => (btn.textContent = prev), 900);
+          }
+        });
+      })();
+    `}
+  </script>
+</BaseLayout>

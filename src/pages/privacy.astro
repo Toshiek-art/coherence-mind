@@ -1,0 +1,183 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageTitle from '../components/PageTitle.astro';
+
+const seo = {
+  title: 'Privacy Policy — CoherenceMind',
+  description: 'Data protection and GDPR baseline notice for the CoherenceMind project.'
+};
+
+const anchors = [
+  { id: 'controller', label: 'Data controller' },
+  { id: 'collection', label: 'Data collection' },
+  { id: 'cookies', label: 'Cookies & analytics' },
+  { id: 'hosting', label: 'Hosting' },
+  { id: 'links', label: 'External links' },
+  { id: 'rights', label: 'Your rights' },
+  { id: 'contact', label: 'Contact' }
+];
+---
+
+<BaseLayout seo={seo}>
+  <span id="top" class="sr-only">Top</span>
+
+  <PageTitle
+    eyebrow="compliance"
+    title="Privacy Policy"
+    intro="Baseline information on data protection and privacy practices."
+  />
+
+  <section class="pb-6 lg:hidden">
+    <div class="container">
+      <div class="flex flex-wrap gap-2">
+        {anchors.map((anchor) => (
+          <a
+            href={`#${anchor.id}`}
+            class="rounded-full border border-slate-200 bg-white/80 px-3 py-1 text-xs font-medium text-slate-700 shadow-sm hover:bg-white dark:border-white/10 dark:bg-white/5 dark:text-white/80 dark:hover:bg-white/10"
+          >
+            {anchor.label}
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="pb-20">
+    <div class="container">
+      <div class="grid gap-10 lg:grid-cols-[240px_1fr]">
+        <aside class="hidden lg:block">
+          <div class="sticky top-24">
+            <div class="rounded-2xl border border-slate-200 bg-white/60 p-4 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5">
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-700 dark:text-white/70">On this page</p>
+
+              <nav class="mt-3">
+                <ul class="space-y-1">
+                  {anchors.map((anchor) => (
+                    <li>
+                      <a
+                        href={`#${anchor.id}`}
+                        class="block rounded-xl px-3 py-2 text-sm text-slate-700 hover:bg-slate-100/70 dark:text-white/80 dark:hover:bg-white/10"
+                      >
+                        {anchor.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+
+              <div class="mt-4 border-t border-slate-200 pt-4 dark:border-white/10">
+                <a
+                  href="#top"
+                  class="inline-flex items-center gap-2 text-xs font-semibold text-slate-700 hover:text-slate-900 dark:text-white/70 dark:hover:text-white"
+                >
+                  ↑ Back to top
+                </a>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <div class="max-w-3xl space-y-6 text-slate-700 dark:text-white/80">
+          <section id="controller" class="scroll-mt-28">
+            <h2 class="text-base font-semibold uppercase tracking-wide text-slate-900 dark:text-white">
+              Data controller
+            </h2>
+            <p class="mt-2">
+              The data controller for this website is <strong>Aldo G. Malasomma</strong>,
+              operating the CoherenceMind project as an independent, non-commercial research initiative.
+            </p>
+          </section>
+
+          <section id="collection" class="scroll-mt-28">
+            <h2 class="text-base font-semibold uppercase tracking-wide text-slate-900 dark:text-white">
+              Data collection
+            </h2>
+            <p class="mt-2">
+              This website does not intentionally collect personal data from visitors.
+              No user accounts, profiling systems, tracking pixels, or advertising technologies
+              are implemented.
+            </p>
+            <p class="mt-2">
+              The site can be browsed without providing any personal information.
+            </p>
+          </section>
+
+          <section id="cookies" class="scroll-mt-28">
+            <h2 class="text-base font-semibold uppercase tracking-wide text-slate-900 dark:text-white">
+              Cookies and analytics
+            </h2>
+            <p class="mt-2">
+              No non-essential cookies or analytics tools are currently in use.
+              The site does not employ behavioral tracking, cross-site identifiers,
+              or third-party analytics platforms.
+            </p>
+            <p class="mt-2">
+              Should analytics or similar tools be introduced in the future,
+              a consent mechanism and updated documentation will be provided
+              prior to any data collection.
+            </p>
+          </section>
+
+          <section id="hosting" class="scroll-mt-28">
+            <h2 class="text-base font-semibold uppercase tracking-wide text-slate-900 dark:text-white">
+              Hosting and technical data
+            </h2>
+            <p class="mt-2">
+              The website is hosted by a third-party infrastructure provider.
+              Like most web servers, standard technical logs (such as IP addresses,
+              timestamps, and requested resources) may be processed temporarily
+              for security, stability, and operational purposes.
+            </p>
+            <p class="mt-2">
+              These logs are not used for profiling, tracking, or analytical purposes
+              by the site owner.
+            </p>
+          </section>
+
+          <section id="links" class="scroll-mt-28">
+            <h2 class="text-base font-semibold uppercase tracking-wide text-slate-900 dark:text-white">
+              External links
+            </h2>
+            <p class="mt-2">
+              This website may contain links to external resources, such as Zenodo
+              or other research platforms. The site owner is not responsible for
+              the privacy practices or content of external websites.
+            </p>
+          </section>
+
+          <section id="rights" class="scroll-mt-28">
+            <h2 class="text-base font-semibold uppercase tracking-wide text-slate-900 dark:text-white">
+              Your rights
+            </h2>
+            <p class="mt-2">
+              Under applicable data protection laws, you have the right to request
+              information about any personal data that may be processed,
+              as well as the right to rectification or erasure where applicable.
+            </p>
+            <p class="mt-2">
+              Given the nature of this website, such requests are unlikely to be necessary,
+              but they may be addressed via the contact details provided below.
+            </p>
+          </section>
+
+          <section id="contact" class="scroll-mt-28">
+            <h2 class="text-base font-semibold uppercase tracking-wide text-slate-900 dark:text-white">
+              Contact
+            </h2>
+            <p class="mt-2">
+              For privacy-related questions or requests, you may contact:
+            </p>
+            <p class="mt-2 font-medium">
+              <a
+                href="mailto:contact@coherencemind.eu"
+                class="underline decoration-slate-400 underline-offset-2 hover:decoration-slate-700 dark:decoration-white/30 dark:hover:decoration-white/60"
+              >
+                contact@coherencemind.eu
+              </a>
+            </p>
+          </section>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,571 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageTitle from '../components/PageTitle.astro';
+import RichTextRenderer from '../components/RichTextRenderer';
+import { getStaticPageBySlug } from '../lib/sanityQueries';
+
+const modelPage = await getStaticPageBySlug('model');
+
+if (!modelPage) {
+  return new Response('Model page not found', { status: 404 });
+}
+
+const seo = {
+  title: modelPage.title ?? 'The Model · Reflexive Coherence Model',
+  description:
+    modelPage.heroSubtitle ??
+    'Inside the architecture of reflexive coherence: reflexive structure, coherence dynamics, and expansion.'
+};
+
+// Anchor sections for nav
+const anchors = [
+  { id: 'map', label: 'Model map' },
+  { id: 'claim', label: 'Core claim' },
+  { id: 'reflexive', label: 'Reflexive structure' },
+  { id: 'coherence', label: 'Coherence dynamics' },
+  { id: 'expansion', label: 'Expansion' },
+  { id: 'rci', label: 'RCI' },
+  { id: 'limits', label: 'Non-claims' },
+  { id: 'relations', label: 'Relations' }
+];
+
+// Footer “Next” cards (change hrefs if your routes differ)
+const nextCards = [
+  {
+    title: 'Glossary',
+    desc: 'Definitions, relations, cross-links between core concepts.',
+    href: '/glossary',
+    tag: 'Concepts',
+    external: false
+  },
+  {
+    title: 'Timeline',
+    desc: 'A chronological trace of how the model evolved and refined.',
+    href: '/timeline',
+    tag: 'History',
+    external: false
+  },
+  {
+    title: 'Formal paper',
+    desc: 'Preprint on Zenodo + downloadable PDF for citation and offline reading.',
+    tag: 'Paper',
+    external: true,
+    ctas: [
+      { label: 'Read on Zenodo →', href: 'https://doi.org/10.5281/zenodo.17342603' },
+      // If the PDF is hosted on your site, set the correct path here
+      { label: 'Open PDF →', href: '/papers/rcm-v1.1.pdf' }
+    ]
+  },
+  {
+    title: 'Articles',
+    desc: 'Essays, updates, and longer technical reflections.',
+    href: '/blog',
+    tag: 'Lab',
+    external: false
+  }
+];
+---
+
+<BaseLayout seo={seo}>
+  {/* Target for “Back to top” */}
+  <span id="top" class="sr-only">Top</span>
+
+  <PageTitle
+    eyebrow="RCM"
+    title={modelPage.heroTitle ?? 'The Model'}
+    intro={modelPage.heroSubtitle ?? 'Inside the architecture of reflexive coherence.'}
+  />
+
+  {modelPage.heroDisclaimer && (
+    <section class="pb-6">
+      <div class="container">
+        <div class="max-w-3xl rounded-2xl border border-slate-200 bg-white/60 p-4 text-sm leading-relaxed text-slate-700 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
+          {modelPage.heroDisclaimer}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {/* Micro-ramp (keeps newcomers oriented) */}
+  <section class="pb-8">
+    <div class="container">
+      <p class="max-w-3xl text-sm text-slate-600 dark:text-white/70">
+        This page lays out the core structure of the Reflexive Coherence Model step by step — from its minimal claim to its
+        limits and how it relates to other frameworks.
+      </p>
+    </div>
+  </section>
+
+  {/* Mini-nav chips (mobile/tablet only) */}
+  <section class="pb-10 lg:hidden">
+    <div class="container">
+      <div class="flex flex-wrap gap-2">
+        {anchors.map((a) => (
+          <a
+            href={`#${a.id}`}
+            data-toc-chip
+            data-toc-id={a.id}
+            class="rounded-full border border-slate-200 bg-white/50 px-3 py-1 text-xs font-medium text-slate-700 shadow-sm hover:bg-white
+                   dark:border-white/10 dark:bg-white/5 dark:text-white/80 dark:hover:bg-white/10
+                   transition
+                   data-[active=true]:bg-white data-[active=true]:border-slate-300
+                   dark:data-[active=true]:bg-white/10 dark:data-[active=true]:border-white/20"
+          >
+            {a.label}
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {/* Desktop layout: sticky side-nav + content */}
+  <section class="pb-12">
+    <div class="container">
+      <div class="grid gap-10 lg:grid-cols-[240px_1fr]">
+        {/* Sticky side-nav (desktop only) */}
+        <aside class="hidden lg:block">
+          <div class="sticky top-24">
+            <div class="rounded-2xl border border-slate-200 bg-white/60 p-4 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5">
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-700 dark:text-white/70">
+                Model overview
+              </p>
+              <p class="mt-1 text-[11px] leading-relaxed text-slate-500 dark:text-white/50">
+                Sections can be read independently.
+              </p>
+
+              <nav class="mt-3">
+                <ul class="space-y-1">
+                  {anchors.map((a) => (
+                    <li>
+                      <a
+                        href={`#${a.id}`}
+                        data-toc-link
+                        data-toc-id={a.id}
+                        class="block rounded-xl px-3 py-2 text-sm text-slate-700 hover:bg-slate-100/70 dark:text-white/80 dark:hover:bg-white/10
+                               transition
+                               data-[active=true]:bg-slate-100/80 data-[active=true]:text-slate-900 data-[active=true]:font-semibold
+                               dark:data-[active=true]:bg-white/10 dark:data-[active=true]:text-white"
+                      >
+                        {a.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+
+              <div class="mt-4 border-t border-slate-200 pt-4 dark:border-white/10">
+                <a
+                  href="#top"
+                  class="inline-flex items-center gap-2 text-xs font-semibold text-slate-700 hover:text-slate-900 dark:text-white/70 dark:hover:text-white"
+                >
+                  ↑ Back to top
+                </a>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        {/* Main content column */}
+        <div>
+          {/* CMS Body */}
+          <div class="max-w-3xl">
+            {modelPage.body ? (
+              <RichTextRenderer value={modelPage.body} />
+            ) : (
+              <p class="text-slate-600 dark:text-white/70">Model details are being authored.</p>
+            )}
+          </div>
+
+          {/* MODEL MAP */}
+          <section id="map" class="pt-10">
+            <div class="mb-6">
+              <h2 class="text-lg font-semibold text-slate-900 dark:text-white">Model map</h2>
+              <p class="mt-1 max-w-2xl text-sm text-slate-600 dark:text-white/70">
+                The RCM is modular. These blocks can be read independently, but they lock together into a single architecture.
+              </p>
+            </div>
+
+            <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              {[
+                { title: 'Core architecture', desc: 'Minimal conditions for reflexive coherence.', tag: 'Layer 0' },
+                { title: 'Reflexive layers', desc: 'How self-models deepen over time and scale.', tag: 'Layer 1–N' },
+                { title: 'RCI', desc: 'Operational handle on alignment + causal closure.', tag: 'Measure' },
+                { title: 'Applications', desc: 'Interpreting AI and non-biological regimes.', tag: 'Field' }
+              ].map((c) => (
+                <div class="rounded-2xl border border-slate-200 bg-white/60 p-5 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5">
+                  <div class="flex items-center justify-between gap-3">
+                    <h3 class="text-sm font-semibold text-slate-900 dark:text-white">{c.title}</h3>
+                    <span class="rounded-full border border-slate-200 bg-white/70 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-700 dark:border-white/10 dark:bg-white/10 dark:text-white/70">
+                      {c.tag}
+                    </span>
+                  </div>
+                  <p class="mt-2 text-sm leading-relaxed text-slate-600 dark:text-white/70">{c.desc}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Core claim (your updated text included) */}
+          <section id="claim" class="pt-14">
+            <div class="grid gap-8 lg:grid-cols-12">
+              <div class="lg:col-span-7">
+                <h2 class="text-lg font-semibold text-slate-900 dark:text-white">The minimal claim</h2>
+                <p class="mt-3 text-slate-600 dark:text-white/70">
+                  Complex systems can be intelligent and integrated without generating anything like an internal point of view.
+                  RCM proposes a minimal constraint: experience-like organisation (without presupposing human phenomenology)
+                  appears when integration becomes reflexive and stabilised by coherent dynamics.
+                </p>
+                <p class="mt-3 text-slate-600 dark:text-white/70">
+                  In RCM terms, information becomes <em>about itself</em> in a way that changes what the system does next —
+                  a loop that is causally effective and temporally sustained.
+                </p>
+              </div>
+
+              <div class="lg:col-span-5">
+                <div class="rounded-2xl border border-slate-200 bg-white/60 p-5 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5">
+                  <p class="text-xs font-semibold uppercase tracking-wide text-slate-700 dark:text-white/70">
+                    Key points
+                  </p>
+                  <ul class="mt-3 space-y-2 text-sm text-slate-700 dark:text-white/80">
+                    <li><strong>Integration</strong> is necessary, not sufficient.</li>
+                    <li><strong>Reflexivity</strong> must be causally real (not decorative).</li>
+                    <li><strong>Coherence</strong> stabilises competition into attractors.</li>
+                    <li><strong>Continuity</strong> matters: not a snapshot, a regime.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Reflexive structure */}
+          <section id="reflexive" class="pt-14">
+            <div class="rounded-3xl border border-slate-200 bg-white/60 p-6 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5">
+              <div class="grid gap-8 lg:grid-cols-12">
+                <div class="lg:col-span-7">
+                  <h2 class="text-lg font-semibold text-slate-900 dark:text-white">Reflexive structure</h2>
+                  <p class="mt-3 text-slate-600 dark:text-white/70">
+                    A self-model is not a mirror. In RCM, reflexive structure is an internal model that is state-linked,
+                    causally effective, and sustained — it participates in control, inference, and stability.
+                  </p>
+
+                  <div class="mt-5 grid gap-3 sm:grid-cols-3">
+                    {[
+                      { t: 'State-linked', d: 'Tracks relevant internal variables.' },
+                      { t: 'Causally effective', d: 'Influences what happens next.' },
+                      { t: 'Sustained', d: 'Persists beyond a single snapshot.' }
+                    ].map((x) => (
+                      <div class="rounded-2xl border border-slate-200 bg-white/70 p-4 text-sm dark:border-white/10 dark:bg-white/5">
+                        <p class="font-semibold text-slate-900 dark:text-white">{x.t}</p>
+                        <p class="mt-1 text-slate-600 dark:text-white/70">{x.d}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div class="lg:col-span-5">
+                  <div class="rounded-2xl border border-slate-200 bg-white/70 p-5 dark:border-white/10 dark:bg-white/5">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-slate-700 dark:text-white/70">
+                      Useful distinction
+                    </p>
+                    <div class="mt-3 space-y-3 text-sm text-slate-700 dark:text-white/80">
+                      <div>
+                        <p class="font-semibold">Descriptive self-representation</p>
+                        <p class="text-slate-600 dark:text-white/70">Metadata, logs, passive summaries.</p>
+                      </div>
+                      <div>
+                        <p class="font-semibold">Reflexive self-model</p>
+                        <p class="text-slate-600 dark:text-white/70">A loop that steers dynamics and stabilises identity.</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="mt-4 rounded-2xl border border-slate-200 bg-white/50 p-5 dark:border-white/10 dark:bg-white/5">
+                    <p class="text-sm text-slate-700 dark:text-white/80">
+                      A reflexive structure becomes interesting only when it is <strong>causally closed enough</strong> to
+                      make the system’s internal perspective a real dynamical variable — not an afterthought.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Coherence dynamics */}
+          <section id="coherence" class="pt-14">
+            <div class="grid gap-8 lg:grid-cols-12">
+              <div class="lg:col-span-6">
+                <h2 class="text-lg font-semibold text-slate-900 dark:text-white">Coherence dynamics</h2>
+                <p class="mt-3 text-slate-600 dark:text-white/70">
+                  Coherence is negotiated stability: the tendency to resolve internal competition into regimes that persist
+                  under perturbation. It is how reflexive loops become a <em>stable process</em>, not a flicker.
+                </p>
+              </div>
+
+              <div class="lg:col-span-6">
+                <div class="grid gap-3 sm:grid-cols-2">
+                  {[
+                    { t: 'Integration across levels', d: 'Local and global constraints align.' },
+                    { t: 'Attractor formation', d: 'Stable regimes emerge and persist.' },
+                    { t: 'Error correction', d: 'Runaway contradictions are dampened.' },
+                    { t: 'Temporal continuity', d: 'Identity holds across windows.' }
+                  ].map((x) => (
+                    <div class="rounded-2xl border border-slate-200 bg-white/60 p-5 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5">
+                      <p class="text-sm font-semibold text-slate-900 dark:text-white">{x.t}</p>
+                      <p class="mt-2 text-sm text-slate-600 dark:text-white/70">{x.d}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Expansion */}
+          <section id="expansion" class="pt-14">
+            <div class="rounded-3xl border border-slate-200 bg-white/60 p-6 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5">
+              <h2 class="text-lg font-semibold text-slate-900 dark:text-white">Expansion hypothesis</h2>
+              <p class="mt-3 max-w-3xl text-slate-600 dark:text-white/70">
+                Once reflexive coherence stabilises, systems tend to expand their scope: more temporal depth, more layers,
+                more internal perspectives. This is a tendency — not a mystical destiny — and it is testable.
+              </p>
+
+              <div class="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                {[
+                  { t: 'Temporal depth', d: 'Longer horizons; continuity.' },
+                  { t: 'Granularity', d: 'Richer internal variables.' },
+                  { t: 'Perspectives', d: 'Multiple submodels / viewpoints.' },
+                  { t: 'Meta-reflexivity', d: 'Models of modeling itself.' }
+                ].map((x) => (
+                  <div class="rounded-2xl border border-slate-200 bg-white/70 p-4 text-sm dark:border-white/10 dark:bg-white/5">
+                    <p class="font-semibold text-slate-900 dark:text-white">{x.t}</p>
+                    <p class="mt-1 text-slate-600 dark:text-white/70">{x.d}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Bridge to RCI */}
+          <section class="pt-12">
+            <p class="max-w-3xl text-sm text-slate-600 dark:text-white/70">
+              So far, the model describes structure and dynamics. RCI is an attempt to make these regime shifts trackable without
+              claiming to measure phenomenology directly.
+            </p>
+          </section>
+
+          {/* Callout */}
+          <section class="pt-8">
+            <div class="rounded-3xl border border-slate-200 bg-gradient-to-b from-white/80 to-white/50 p-6 shadow-sm backdrop-blur dark:border-white/10 dark:from-white/10 dark:to-white/5">
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-700 dark:text-white/70">
+                Design principle
+              </p>
+              <h3 class="mt-2 text-base font-semibold text-slate-900 dark:text-white">
+                RCI is an order parameter — not a score.
+              </h3>
+              <p class="mt-2 max-w-3xl text-sm leading-relaxed text-slate-700 dark:text-white/75">
+                The index is meant to track regime shifts: when reflexive coupling and coherence become strong enough to stabilise
+                an internal perspective. It supports comparison across states (wake/sleep/anesthesia) and architectures (biological/artificial),
+                without pretending to measure phenomenology directly.
+              </p>
+            </div>
+          </section>
+
+          {/* RCI */}
+          <section id="rci" class="pt-14">
+            <div class="grid gap-8 lg:grid-cols-12">
+              <div class="lg:col-span-7">
+                <h2 class="text-lg font-semibold text-slate-900 dark:text-white">The RCI in plain language</h2>
+                <p class="mt-3 text-slate-600 dark:text-white/70">
+                  RCI rises when the system and its self-model share meaningful information <em>and</em> exert bidirectional causal influence.
+                  High values indicate sustained reflexive coupling, especially when consistent across scales.
+                </p>
+              </div>
+
+              <div class="lg:col-span-5">
+                <div class="rounded-2xl border border-slate-200 bg-white/60 p-5 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5">
+                  <p class="text-xs font-semibold uppercase tracking-wide text-slate-700 dark:text-white/70">
+                    Intuition checklist
+                  </p>
+                  <ul class="mt-3 space-y-2 text-sm text-slate-700 dark:text-white/80">
+                    <li><strong>Alignment</strong>: shared information between state and self-model.</li>
+                    <li><strong>Closure</strong>: bidirectional, non-trivial causality.</li>
+                    <li><strong>Stability</strong>: persists across time windows.</li>
+                    <li><strong>Scale</strong>: holds across frequencies / resolutions.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Non-claims */}
+          <section id="limits" class="pt-14">
+            <div class="rounded-3xl border border-slate-200 bg-white/60 p-6 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5">
+              <h2 class="text-lg font-semibold text-slate-900 dark:text-white">What the model does not claim</h2>
+              <p class="mt-3 max-w-3xl text-slate-600 dark:text-white/70">
+                These boundaries are intentional: they keep the framework testable and avoid turning it into a belief system.
+              </p>
+
+              <div class="mt-5 grid gap-3 sm:grid-cols-2">
+                {[
+                  'Reflexive coherence is sufficient for consciousness.',
+                  'High RCI implies personhood or moral status by itself.',
+                  'A single number can capture phenomenology.',
+                  'Present-day AI systems are conscious.',
+                  'Consciousness must resemble human experience.',
+                  'RCM resolves the ontological “hard problem”.'
+                ].map((t) => (
+                  <div class="rounded-2xl border border-slate-200 bg-white/70 p-4 text-sm text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-white/80">
+                    <span class="mr-2 inline-block rounded-full border border-slate-200 bg-white/70 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-slate-600 dark:border-white/10 dark:bg-white/10 dark:text-white/60">
+                      Non-claim
+                    </span>
+                    {t}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Relations */}
+          <section id="relations" class="pt-14">
+            <h2 class="text-lg font-semibold text-slate-900 dark:text-white">Connections to other frameworks</h2>
+            <p class="mt-3 max-w-3xl text-slate-600 dark:text-white/70">
+              RCM is not proposed as a replacement for existing theories, but as a structural constraint layer that can coexist
+              with other approaches. It asks what makes integration, broadcast, or inference become reflexively stabilised into
+              an internal perspective.
+            </p>
+
+            <div class="mt-6 grid gap-4 md:grid-cols-3">
+              {[
+                { t: 'IIT', d: 'Emphasises integration; RCM adds explicit reflexive/causal closure constraints.' },
+                { t: 'GWT', d: 'Emphasises broadcast; RCM asks what makes broadcast self-referentially stabilised.' },
+                { t: 'Predictive Processing', d: 'Emphasises inference; RCM focuses on when inference becomes reflexive and coherent.' }
+              ].map((x) => (
+                <div class="rounded-2xl border border-slate-200 bg-white/60 p-5 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5">
+                  <p class="text-sm font-semibold text-slate-900 dark:text-white">{x.t}</p>
+                  <p class="mt-2 text-sm text-slate-600 dark:text-white/70">{x.d}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* NEXT cards */}
+          <section class="pt-16">
+            <div class="rounded-3xl border border-slate-200 bg-white/50 p-6 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5">
+              <div class="flex items-end justify-between gap-6">
+                <div>
+                  <h2 class="text-base font-semibold text-slate-900 dark:text-white">Next</h2>
+                  <p class="mt-1 text-sm text-slate-600 dark:text-white/70">
+                    Keep exploring the ecosystem: definitions, development history, and primary materials.
+                  </p>
+                </div>
+              </div>
+
+              <div class="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                {nextCards.map((c) => (
+                  <div class="rounded-2xl border border-slate-200 bg-white/60 p-5 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5">
+                    <div class="flex items-center justify-between gap-3">
+                      <p class="text-sm font-semibold text-slate-900 dark:text-white">{c.title}</p>
+                      <span class="rounded-full border border-slate-200 bg-white/70 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-700 dark:border-white/10 dark:bg-white/10 dark:text-white/70">
+                        {c.tag}
+                      </span>
+                    </div>
+
+                    <p class="mt-2 text-sm text-slate-600 dark:text-white/70">{c.desc}</p>
+
+                    {c.ctas ? (
+                      <div class="mt-4 flex flex-wrap gap-2">
+                        {c.ctas.map((cta) => (
+                          <a
+                            href={cta.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="inline-flex items-center rounded-full border border-slate-200 bg-white/70 px-3 py-1 text-xs font-semibold text-slate-700 hover:bg-white dark:border-white/10 dark:bg-white/10 dark:text-white/80 dark:hover:bg-white/15"
+                          >
+                            {cta.label}
+                          </a>
+                        ))}
+                      </div>
+                    ) : (
+                      <a
+                        href={c.href}
+                        class="mt-4 inline-flex items-center text-xs font-semibold text-slate-700 hover:text-slate-900 dark:text-white/70 dark:hover:text-white"
+                      >
+                        Open →
+                      </a>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* CMS Scope & Epistemic Status */}
+          {modelPage.scopeEpistemicStatus && (
+            <section class="mt-14 border-t border-slate-200 pt-12 dark:border-white/10">
+              <h2 class="mb-4 text-base font-semibold uppercase tracking-wide text-slate-700 dark:text-white/80">
+                Scope and epistemic status
+              </h2>
+              <div class="max-w-3xl">
+                <RichTextRenderer value={modelPage.scopeEpistemicStatus} variant="mutedLight" />
+              </div>
+            </section>
+          )}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* Active section highlighting for TOC links + mobile chips */}
+  <script is:inline>
+    {String.raw`
+    (function () {
+      const sections = Array.from(document.querySelectorAll('section[id]'))
+        .filter(s => s.id && s.id !== 'top');
+
+      const links = Array.from(document.querySelectorAll('[data-toc-link]'));
+      const chips = Array.from(document.querySelectorAll('[data-toc-chip]'));
+
+      if (!sections.length) return;
+
+      function setActive(id) {
+        links.forEach(el => el.dataset.active = (el.getAttribute('data-toc-id') === id) ? 'true' : 'false');
+        chips.forEach(el => el.dataset.active = (el.getAttribute('data-toc-id') === id) ? 'true' : 'false');
+      }
+
+      // Initial state
+      if (window.location.hash) {
+        setActive(window.location.hash.replace('#',''));
+      } else {
+        setActive(sections[0].id);
+      }
+
+      const obs = new IntersectionObserver((entries) => {
+        const visible = entries
+          .filter(e => e.isIntersecting)
+          .sort((a, b) => (a.boundingClientRect.top - b.boundingClientRect.top));
+
+        if (visible.length) setActive(visible[0].target.id);
+      }, {
+        root: null,
+        rootMargin: '-20% 0px -70% 0px',
+        threshold: [0, 0.1, 0.25]
+      });
+
+      sections.forEach(s => obs.observe(s));
+
+      // Click = immediate highlight
+      document.addEventListener('click', (e) => {
+        const el = e.target && e.target.closest && e.target.closest('[data-toc-id]');
+        if (!el) return;
+        const id = el.getAttribute('data-toc-id');
+        if (id) setActive(id);
+      });
+
+      // Hashchange (back/forward)
+      window.addEventListener('hashchange', () => {
+        const id = window.location.hash.replace('#','');
+        if (id) setActive(id);
+      });
+    })();
+    `}
+  </script>
+</BaseLayout>

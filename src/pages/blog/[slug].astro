@@ -1,0 +1,103 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageTitle from '../../components/PageTitle.astro';
+import Tag from '../../components/Tag.astro';
+import RichTextRenderer from '../../components/RichTextRenderer';
+import { getBlogPosts, getBlogPostBySlug } from '../../lib/sanityQueries';
+
+export async function getStaticPaths() {
+  const posts = await getBlogPosts();
+  return (posts ?? []).map((post) => ({ params: { slug: post.slug }, props: { slug: post.slug } }));
+}
+
+const { slug } = Astro.params;
+const post = await getBlogPostBySlug(slug!);
+
+if (!post) {
+  return new Response('Not found', { status: 404 });
+}
+
+const seo = {
+  title: `${post.title} — Reflexive Coherence`,
+  description: post.excerpt ?? 'Article from the Reflexive Coherence Lab.',
+  canonicalUrl: new URL(`/blog/${post.slug}`, Astro.site ?? 'https://www.reflexivecoherencemodel.org').toString()
+};
+
+const publishedLabel = post.publishedAt
+  ? new Date(post.publishedAt).toLocaleDateString(undefined, { dateStyle: 'medium' })
+  : null;
+---
+<BaseLayout seo={seo}>
+  <PageTitle
+    eyebrow="article"
+    title={post.title}
+    intro={publishedLabel ? `Published ${publishedLabel}` : 'Article'}
+  />
+
+  <section class="pb-20">
+    <div class="container">
+      <div class="mb-6 flex flex-wrap items-center gap-3 text-sm text-slate-600 dark:text-white/70">
+        <a
+          href="/blog"
+          class="underline decoration-slate-300 underline-offset-2 hover:decoration-slate-500 dark:decoration-white/20 dark:hover:decoration-white/40"
+        >
+          ← Back to Articles
+        </a>
+        {post.excerpt ? (
+          <span class="text-slate-400 dark:text-white/35">·</span>
+        ) : null}
+        {post.excerpt ? (
+          <span class="max-w-2xl text-slate-600 dark:text-white/70">
+            {post.excerpt}
+          </span>
+        ) : null}
+      </div>
+
+      {post.tags?.length ? (
+        <div class="mb-8 flex flex-wrap gap-2">
+          {post.tags.map((tag) => (
+            <Tag label={tag} />
+          ))}
+        </div>
+      ) : null}
+
+      <article class="max-w-3xl">
+        {post.body ? (
+          <div class="prose prose-slate dark:prose-invert">
+            <RichTextRenderer value={post.body} />
+          </div>
+        ) : (
+          <p class="text-slate-600 dark:text-white/70">Full text coming soon.</p>
+        )}
+      </article>
+
+      {/* Home-only lab notes reminder */}
+      <div class="mt-14 max-w-3xl rounded-3xl border border-slate-200 bg-white/50 p-6 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5">
+        <h2 class="text-base font-semibold text-slate-900 dark:text-white">
+          Lab notes
+        </h2>
+
+        <p class="mt-1 text-sm text-slate-600 dark:text-white/70">
+          Field records and evolving reflections connected to this line of inquiry.
+        </p>
+
+        <div class="mt-4 flex flex-wrap gap-2">
+          <a
+            href="/notes"
+            class="inline-flex items-center rounded-full border border-slate-200 bg-white/70 px-3 py-1 text-xs font-semibold text-slate-700 hover:bg-white dark:border-white/10 dark:bg-white/10 dark:text-white/80 dark:hover:bg-white/15"
+          >
+            Open Notes →
+          </a>
+
+          <a
+            href="/model"
+            class="inline-flex items-center rounded-full border border-slate-200 bg-white/70 px-3 py-1 text-xs font-semibold text-slate-700 hover:bg-white dark:border-white/10 dark:bg-white/10 dark:text-white/80 dark:hover:bg-white/15"
+          >
+            Back to Model →
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,54 @@
+---
+import type { TimelineEvent } from '../lib/types';
+import RichTextRenderer from './RichTextRenderer';
+
+const { event } = Astro.props as { event: TimelineEvent };
+
+// Robust date label (no crash if date missing/invalid)
+const safeDate = (value?: string) => {
+  if (!value) return null;
+  const d = new Date(value);
+  return Number.isFinite(d.getTime()) ? d : null;
+};
+
+const d = safeDate(event.date);
+
+const dateLabel =
+  event.dateFormatted
+    ? event.dateFormatted
+    : d
+      ? d.toLocaleDateString(undefined, { dateStyle: 'medium' })
+      : event.year
+        ? String(event.year)
+        : '—';
+---
+<li class="relative pl-10">
+  {/* node (ring + dot) */}
+  <span class="absolute left-0 top-6 -translate-x-1/2">
+    <span class="flex h-6 w-6 items-center justify-center rounded-full border border-slate-300 bg-white shadow-sm dark:border-white/20 dark:bg-slate-900">
+      <span class="h-2.5 w-2.5 rounded-full bg-accent"></span>
+    </span>
+  </span>
+
+  <article class="space-y-3 rounded-2xl border border-slate-200 bg-white/70 p-5 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5">
+    <p class="text-xs font-semibold uppercase tracking-[0.28em] text-slate-500 dark:text-white/60">
+      {dateLabel}
+    </p>
+
+    <h3 class="text-lg font-semibold text-slate-900 dark:text-white">
+      {event.title}
+    </h3>
+
+    {event.summary && (
+      <p class="text-sm leading-relaxed text-slate-700 dark:text-white/75">
+        {event.summary}
+      </p>
+    )}
+
+    {event.body && (
+      <div class="prose prose-slate max-w-none dark:prose-invert">
+        <RichTextRenderer value={event.body} />
+      </div>
+    )}
+  </article>
+</li>

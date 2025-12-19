@@ -1,0 +1,36 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageTitle from '../components/PageTitle.astro';
+import Card from '../components/Card.astro';
+import { getNotes } from '../lib/sanityQueries';
+
+const notes = await getNotes();
+const seo = {
+  title: 'Lab Notes — RCM',
+  description: 'Working fragments, lab logs, and thought experiments.'
+};
+---
+<BaseLayout seo={seo}>
+  <PageTitle
+    eyebrow="notes"
+    title="Lab Notes"
+    intro="In-progress reflections from experiments with reflexive coherence."
+  />
+  <section class="pb-20">
+    <div class="container grid gap-6 md:grid-cols-2">
+      {notes?.length ? (
+        notes.map((note) => (
+          <Card
+            title={note.title}
+            href={`/notes/${note.slug}`}
+            meta={new Date(note.createdAt).toLocaleDateString(undefined, { dateStyle: 'medium' })}
+            excerpt={note.body ? undefined : 'Full note will be published soon.'}
+            tags={note.tags ?? []}
+          />
+        ))
+      ) : (
+        <p class="text-white/70">Notes are currently offline.</p>
+      )}
+    </div>
+  </section>
+</BaseLayout>

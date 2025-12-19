@@ -1,0 +1,63 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Seo from '../components/Seo.astro';
+import CookieBanner from '../components/CookieBanner.astro';
+import { getNavigation, getSiteSettings } from '../lib/sanityQueries';
+
+const { seo } = Astro.props;
+const [navigation, settings] = await Promise.all([
+  getNavigation(),
+  getSiteSettings()
+]);
+const meta = {
+  title: seo?.title ?? settings?.title ?? 'Reflexive Coherence Model',
+  description:
+    seo?.description ??
+    settings?.description ??
+    'Independent research collective exploring the Reflexive Coherence Model.',
+  canonicalUrl: seo?.canonicalUrl,
+  image: seo?.image
+};
+---
+<html lang="en" class="scroll-smooth">
+  <head>
+    <Seo {...meta} />
+    <script is:inline>
+      (() => {
+        const storageKey = 'cm-theme';
+        const root = document.documentElement;
+        const setTheme = (theme) => {
+          const isDark = theme === 'dark';
+          root.classList.toggle('dark', isDark);
+        };
+        try {
+          const stored = localStorage.getItem(storageKey);
+          if (stored === 'dark' || stored === 'light') {
+            setTheme(stored);
+            return;
+          }
+        } catch (error) {}
+        const prefersDark = window.matchMedia
+          ? window.matchMedia('(prefers-color-scheme: dark)').matches
+          : false;
+        if (prefersDark) setTheme('dark');
+      })();
+    </script>
+  </head>
+  <body class="bg-slate-50 text-slate-900 transition-colors duration-300 dark:bg-slate-950 dark:text-slate-100">
+    <a
+      href="#content"
+      class="sr-only focus:not-sr-only focus:absolute focus:m-4 focus:rounded focus:bg-slate-200 focus:px-4 focus:py-2 focus:text-slate-900"
+    >
+      Skip to content
+    </a>
+    <Header navigation={navigation ?? []} />
+    <main id="content" class="min-h-screen">
+      <slot />
+    </main>
+    <Footer siteTitle={settings?.title ?? 'Reflexive Coherence Lab'} />
+    <CookieBanner />
+  </body>
+</html>

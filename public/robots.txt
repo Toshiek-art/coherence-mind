@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://www.reflexivecoherencemodel.org/sitemap-index.xml

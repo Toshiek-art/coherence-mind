@@ -1,0 +1,57 @@
+---
+const { siteTitle = 'CoherenceMind' } = Astro.props;
+const renderedYear = new Date().getFullYear();
+---
+<footer class="border-t border-white/5 bg-ink/90">
+  <div class="container flex flex-col gap-6 py-10 text-sm text-white/70">
+
+    {/* Identity & scope */}
+    <div class="max-w-2xl space-y-2">
+      <p class="text-white/80">
+        © <span data-current-year>{renderedYear}</span> CoherenceMind
+      </p>
+
+      <p class="text-white/60 leading-relaxed">
+        An independent research project dedicated to the Reflexive Coherence Model
+        and the structural conditions under which reflexive consciousness may emerge.
+      </p>
+
+      <p class="text-xs text-white/45 leading-relaxed">
+        Paper published on Zenodo under CC BY-NC-ND 4.0.
+        Website content licensed under CC BY-NC 4.0.
+        Lab notes are not licensed for reuse.
+      </p>
+    </div>
+
+    {/* Links */}
+    <div class="flex flex-wrap items-center gap-4 text-xs text-white/60">
+      <a class="hover:text-white" href="/privacy">Privacy</a>
+      <a class="hover:text-white" href="/imprint">Imprint</a>
+
+      <span class="text-white/30">·</span>
+
+      <span>
+        Site by
+        <a
+          href="https://www.copycodeai.online/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="underline underline-offset-2 hover:text-white"
+        >
+          CopyCodeAI
+        </a>
+      </span>
+
+      <span class="text-white/30">·</span>
+
+      <span>
+        Built with Astro × Sanity
+      </span>
+    </div>
+  </div>
+
+  <script is:inline>
+    const yearNode = document.querySelector('[data-current-year]');
+    if (yearNode) yearNode.textContent = new Date().getFullYear().toString();
+  </script>
+</footer>
