@@ -1,0 +1,88 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageTitle from '../components/PageTitle.astro';
+
+const siteTitle = 'CoherenceMind';
+const lastUpdated = '2025-12-19';
+
+const seo = {
+  title: 'Accessibility · CoherenceMind',
+  description: 'Accessibility statement and contact information for CoherenceMind.'
+};
+
+const commitments = [
+  'Semantic structure with headings, lists, and landmarks to support assistive technologies.',
+  'Keyboard-friendly navigation, visible focus states, and skip links.',
+  'Sufficient color contrast in both the default themes and the optional EAA-friendly mode.',
+  'Reduced motion and animation surfaces kept subtle by default.'
+];
+
+const knownLimitations = [
+  'Third-party embeds or documents linked externally may not fully meet WCAG 2.1 AA.',
+  'PDF assets are provided primarily for download; accessible HTML versions are prioritized for critical content.',
+  'Research content evolves quickly, so some long-form entries may temporarily fall behind our contrast and heading guidelines.'
+];
+---
+
+<BaseLayout seo={seo}>
+  <PageTitle
+    eyebrow="accessibility"
+    title="Accessibility Statement"
+    intro="A summary of our current conformance targets, mitigations, and a contact channel for reporting issues."
+  />
+
+  <section class="pb-16">
+    <div class="container space-y-10">
+      <div class="rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5">
+        <p class="text-sm text-slate-600 dark:text-white/70">
+          {siteTitle} is committed to making this website usable by as many people as possible. Our goal is to align with the
+          European Accessibility Act (Directive (EU) 2019/882) and WCAG 2.1 Level AA. This statement was last updated on
+          <time datetime={lastUpdated}>{lastUpdated}</time> and will be revised as the site evolves.
+        </p>
+      </div>
+
+      <section class="space-y-4">
+        <h2 class="text-xl font-semibold text-slate-900 dark:text-white">What we do by default</h2>
+        <ul class="list-disc space-y-2 pl-6 text-slate-700 dark:text-white/80">
+          {commitments.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+        <p class="text-sm text-slate-600 dark:text-white/70">
+          Users can also cycle through the light, dark, and EAA-friendly high-contrast mode using the theme toggle located in the header. The enhanced mode
+          increases contrast, adjusts typography, and enforces clearer outlines without hiding any content from the default experience.
+        </p>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-xl font-semibold text-slate-900 dark:text-white">Known limitations</h2>
+        <ul class="list-disc space-y-2 pl-6 text-slate-700 dark:text-white/80">
+          {knownLimitations.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+        <p class="text-sm text-slate-600 dark:text-white/70">
+          We run regular automated audits (Lighthouse/axe) and manual reviews to identify regressions. If you discover an issue that is not yet listed here,
+          please let us know so we can prioritize a fix.
+        </p>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-xl font-semibold text-slate-900 dark:text-white">Contact and feedback</h2>
+        <p class="text-sm text-slate-600 dark:text-white/70">
+          Report accessibility problems or request alternative formats via email. Include the page URL, the assistive technology you use (if relevant), and a short
+          description of the barrier you encountered. We aim to respond within five business days.
+        </p>
+        <div class="rounded-2xl border border-slate-200 bg-white/80 p-5 shadow-sm dark:border-white/10 dark:bg-white/5">
+          <p class="text-xs font-semibold uppercase tracking-widest text-slate-500 dark:text-white/60">Email</p>
+          <a
+            class="mt-2 inline-flex items-center text-sky-700 underline underline-offset-4 hover:text-sky-600 dark:text-sky-300 dark:hover:text-sky-200"
+            href="mailto:accessibility@coherencemind.net"
+          >
+            accessibility@coherencemind.net
+          </a>
+        </div>
+      </section>
+    </div>
+  </section>
+</BaseLayout>
