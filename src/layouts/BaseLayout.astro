@@ -28,21 +28,22 @@ const meta = {
       (() => {
         const storageKey = 'cm-theme';
         const root = document.documentElement;
-        const setTheme = (theme) => {
-          const isDark = theme === 'dark';
-          root.classList.toggle('dark', isDark);
+        const themes = ['light', 'dark', 'accessible'];
+        const applyTheme = (theme) => {
+          root.classList.toggle('dark', theme === 'dark');
+          root.classList.toggle('theme-accessible', theme === 'accessible');
         };
         try {
           const stored = localStorage.getItem(storageKey);
-          if (stored === 'dark' || stored === 'light') {
-            setTheme(stored);
+          if (stored && themes.includes(stored)) {
+            applyTheme(stored);
             return;
           }
         } catch (error) {}
         const prefersDark = window.matchMedia
           ? window.matchMedia('(prefers-color-scheme: dark)').matches
           : false;
-        if (prefersDark) setTheme('dark');
+        applyTheme(prefersDark ? 'dark' : 'light');
       })();
     </script>
   </head>
@@ -65,34 +66,56 @@ const meta = {
 
         const storageKey = 'cm-theme';
         const root = document.documentElement;
+        const themes = ['light', 'dark', 'accessible'];
 
-        const getCurrentTheme = () => (root.classList.contains('dark') ? 'dark' : 'light');
+        const getCurrentTheme = () => {
+          if (root.classList.contains('theme-accessible')) return 'accessible';
+          if (root.classList.contains('dark')) return 'dark';
+          return 'light';
+        };
+
+        const applyClasses = (theme) => {
+          root.classList.toggle('dark', theme === 'dark');
+          root.classList.toggle('theme-accessible', theme === 'accessible');
+          if (theme !== 'dark') {
+            root.classList.remove('dark');
+          }
+          if (theme !== 'accessible') {
+            root.classList.remove('theme-accessible');
+          }
+        };
 
         const syncToggles = (theme) => {
-          const isDark = theme === 'dark';
           document.querySelectorAll('[data-theme-toggle]').forEach((btn) => {
             btn.setAttribute('data-theme', theme);
-            btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+            btn.setAttribute('aria-pressed', theme === 'light' ? 'false' : 'true');
             const label = btn.querySelector('[data-theme-label]');
-            if (label) label.textContent = isDark ? 'Dark' : 'Light';
+            if (label) {
+              const text = theme === 'accessible' ? 'EAA' : theme === 'dark' ? 'Dark' : 'Light';
+              label.textContent = text;
+            }
           });
         };
 
         const setTheme = (theme) => {
-          const isDark = theme === 'dark';
-          root.classList.toggle('dark', isDark);
-          syncToggles(theme);
+          const nextTheme = themes.includes(theme) ? theme : 'light';
+          applyClasses(nextTheme);
+          syncToggles(nextTheme);
           try {
-            localStorage.setItem(storageKey, theme);
+            localStorage.setItem(storageKey, nextTheme);
           } catch (error) {}
         };
 
         const init = () => {
-          syncToggles(getCurrentTheme());
+          const current = getCurrentTheme();
+          applyClasses(current);
+          syncToggles(current);
 
           document.querySelectorAll('[data-theme-toggle]').forEach((btn) => {
             btn.addEventListener('click', () => {
-              const next = getCurrentTheme() === 'dark' ? 'light' : 'dark';
+              const currentTheme = getCurrentTheme();
+              const nextIndex = (themes.indexOf(currentTheme) + 1) % themes.length;
+              const next = themes[nextIndex];
               setTheme(next);
             });
           });

@@ -11,10 +11,82 @@ a {
   @apply transition-colors duration-200;
 }
 
+[data-theme-toggle] [data-theme-icon] {
+  display: none;
+}
+
+[data-theme-toggle][data-theme='light'] [data-theme-icon='light'],
+[data-theme-toggle][data-theme='dark'] [data-theme-icon='dark'],
+[data-theme-toggle][data-theme='accessible'] [data-theme-icon='accessible'] {
+  display: flex;
+}
+
 .btn-primary {
   @apply inline-flex items-center justify-center rounded-full border border-transparent bg-accent px-5 py-3 text-sm font-semibold uppercase tracking-widest text-white shadow-depth focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent;
 }
 
 .btn-secondary {
   @apply inline-flex items-center justify-center rounded-full border border-white/40 px-5 py-3 text-sm font-semibold uppercase tracking-widest text-white hover:border-white;
+}
+
+html.theme-accessible {
+  color-scheme: light;
+}
+
+html.theme-accessible body {
+  @apply bg-white text-slate-900;
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+html.theme-accessible :focus-visible {
+  outline: 3px solid #111827;
+  outline-offset: 4px;
+}
+
+html.theme-accessible a {
+  color: #0f62fe;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+}
+
+html.theme-accessible header,
+html.theme-accessible footer,
+html.theme-accessible section,
+html.theme-accessible .rounded-2xl,
+html.theme-accessible .rounded-3xl {
+  background-color: #ffffff !important;
+  border-color: #0f172a1a !important;
+  color: #0f172a !important;
+}
+
+html.theme-accessible .dark\:text-white,
+html.theme-accessible .dark\:text-white\/70,
+html.theme-accessible .dark\:text-white\/80,
+html.theme-accessible .dark\:text-slate-100,
+html.theme-accessible .dark\:text-slate-200,
+html.theme-accessible .dark\:text-slate-300,
+html.theme-accessible .dark\:text-slate-400,
+html.theme-accessible .dark\:text-slate-500,
+html.theme-accessible .dark\:text-slate-600 {
+  color: #0f172a !important;
+}
+
+html.theme-accessible .dark\:bg-slate-900,
+html.theme-accessible .dark\:bg-slate-900\/40,
+html.theme-accessible .dark\:bg-ink\/80,
+html.theme-accessible .dark\:bg-white\/5 {
+  background-color: #ffffff !important;
+}
+
+html.theme-accessible .bg-sky-600,
+html.theme-accessible .dark\:bg-sky-500 {
+  background-color: #0f172a !important;
+  color: #ffffff !important;
+  border-color: #0f172a !important;
+}
+
+html.theme-accessible .bg-sky-600:hover,
+html.theme-accessible .dark\:bg-sky-500:hover {
+  background-color: #1f2937 !important;
 }
