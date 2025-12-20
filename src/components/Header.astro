@@ -79,7 +79,30 @@ const navItems = navigation ?? [];
         const iconClose = toggle.querySelector('[data-icon-close]');
         let isOpen = false;
 
-        const setState = (open) => {
+        const logBodyState = (label, openState) => {
+          const stateLabel = `${label}::${openState ? 'open' : 'closed'}`;
+          if (!body) {
+            console.log('[mobile-nav]', stateLabel, {
+              menuOpen: openState,
+              bodyPresent: false
+            });
+            return;
+          }
+          const computed = window.getComputedStyle(body);
+          console.log('[mobile-nav]', stateLabel, {
+            menuOpen: openState,
+            bodyInlineOverflow: body.style.overflow || '(inline not set)',
+            bodyComputedOverflowX: computed?.overflowX,
+            bodyComputedOverflowY: computed?.overflowY,
+            bodyClassList: body.className
+          });
+        };
+
+        const setState = (open, reason = 'manual', force = false) => {
+          if (!force && open === isOpen) {
+            logBodyState(`${reason}:noop`, open);
+            return;
+          }
           isOpen = open;
           menu.hidden = !open;
           toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
@@ -90,23 +113,31 @@ const navItems = navigation ?? [];
           }
           if (body) {
             body.classList.toggle('overflow-hidden', open);
+            if (!open) {
+              body.classList.remove('overflow-hidden');
+            }
           }
+          logBodyState(reason, open);
         };
 
-        toggle.addEventListener('click', () => setState(!isOpen));
-
-        menu.addEventListener('click', (event) => {
+        const handleToggle = () => setState(!isOpen, 'toggle');
+        const handleMenuClick = (event) => {
           const link = event.target && event.target.closest ? event.target.closest('a') : null;
-          if (link) setState(false);
-        });
+          if (link) setState(false, 'link-click');
+        };
+        const handleKeydown = (event) => {
+          if (event.key === 'Escape') setState(false, 'escape');
+        };
 
-        document.addEventListener('keydown', (event) => {
-          if (event.key === 'Escape') setState(false);
-        });
+        toggle.addEventListener('click', handleToggle);
+
+        menu.addEventListener('click', handleMenuClick);
+
+        document.addEventListener('keydown', handleKeydown);
 
         const media = window.matchMedia('(min-width: 1024px)');
         const handleMedia = (event) => {
-          if (event.matches) setState(false);
+          if (event.matches) setState(false, 'media');
         };
 
         if (typeof media.addEventListener === 'function') {
@@ -114,6 +145,26 @@ const navItems = navigation ?? [];
         } else {
           media.onchange = handleMedia;
         }
+
+        const cleanup = () => {
+          setState(false, 'cleanup', true);
+          toggle.removeEventListener('click', handleToggle);
+          menu.removeEventListener('click', handleMenuClick);
+          document.removeEventListener('keydown', handleKeydown);
+          if (typeof media.removeEventListener === 'function') {
+            media.removeEventListener('change', handleMedia);
+          } else {
+            media.onchange = null;
+          }
+          window.removeEventListener('pagehide', cleanup);
+          window.removeEventListener('beforeunload', cleanup);
+          document.removeEventListener('astro:before-swap', cleanup);
+          logBodyState('cleanup-complete', false);
+        };
+
+        window.addEventListener('pagehide', cleanup);
+        window.addEventListener('beforeunload', cleanup);
+        document.addEventListener('astro:before-swap', cleanup);
       };
 
       if (document.readyState === 'loading') {
