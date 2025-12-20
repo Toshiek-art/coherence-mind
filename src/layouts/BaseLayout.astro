@@ -46,6 +46,43 @@ const meta = {
         applyTheme(prefersDark ? 'dark' : 'light');
       })();
     </script>
+    <script is:inline>
+      (() => {
+        if (typeof window === 'undefined' || typeof document === 'undefined') return;
+        const root = document.documentElement;
+        if (!root) return;
+
+        const setViewportUnit = () => {
+          const vh = window.innerHeight * 0.01;
+          root.style.setProperty('--cm-vh', `${vh}px`);
+        };
+
+        let raf = null;
+        const scheduleUpdate = () => {
+          if (raf) cancelAnimationFrame(raf);
+          raf = requestAnimationFrame(() => {
+            setViewportUnit();
+            raf = null;
+          });
+        };
+
+        setViewportUnit();
+        window.addEventListener('resize', scheduleUpdate);
+        window.addEventListener('orientationchange', scheduleUpdate);
+        document.addEventListener('astro:after-swap', setViewportUnit);
+
+        window.addEventListener(
+          'pagehide',
+          () => {
+            window.removeEventListener('resize', scheduleUpdate);
+            window.removeEventListener('orientationchange', scheduleUpdate);
+            document.removeEventListener('astro:after-swap', setViewportUnit);
+            if (raf) cancelAnimationFrame(raf);
+          },
+          { once: true }
+        );
+      })();
+    </script>
   </head>
   <body class="bg-slate-50 text-slate-900 transition-colors duration-300 dark:bg-slate-950 dark:text-slate-100">
     <a
@@ -55,7 +92,11 @@ const meta = {
       Skip to content
     </a>
     <Header navigation={navigation ?? []} />
-    <main id="content" class="min-h-[100svh] min-h-[100dvh]">
+    <main
+      id="content"
+      class="min-h-[100svh] min-h-[100dvh]"
+      style="min-height: calc(var(--cm-vh, 1vh) * 100);"
+    >
       <slot />
     </main>
     <Footer siteTitle={settings?.title ?? 'Reflexive Coherence Lab'} />

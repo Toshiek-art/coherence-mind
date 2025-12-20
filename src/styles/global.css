@@ -2,9 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --cm-vh: 1vh;
+}
 
 body {
   @apply bg-slate-50 text-slate-900 font-sans antialiased transition-colors duration-300 dark:bg-slate-950 dark:text-slate-100;
+  min-height: calc(var(--cm-vh, 1vh) * 100);
 }
 
 a {
