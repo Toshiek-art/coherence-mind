@@ -20,7 +20,7 @@ if (!post) {
 const seo = {
   title: `${post.title} — Reflexive Coherence`,
   description: post.excerpt ?? 'Article from the Reflexive Coherence Lab.',
-  canonicalUrl: new URL(`/blog/${post.slug}`, Astro.site ?? 'https://www.reflexivecoherencemodel.org').toString()
+  canonicalUrl: new URL(`/blog/${post.slug}`, Astro.site ?? 'https://www.coherencemind.net').toString()
 };
 
 const publishedLabel = post.publishedAt

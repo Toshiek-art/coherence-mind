@@ -42,7 +42,7 @@ This document condenses the moving parts of the Reflexive Coherence Model web po
 ## 5. Frontend Architecture
 ### 5.1 Base Layout & Chrome
 - `BaseLayout.astro` imports global CSS, fetches navigation/siteSettings via `getNavigation` + `getSiteSettings`, renders `<Seo>`, header, footer, skip link, and `<CookieBanner>`.
-- Theme bootstrap script reads `localStorage['cm-theme']` or falls back to `prefers-color-scheme`, toggling the `dark` class on `<html>`. `Header` hosts the theme toggle button.
+- Theme bootstrap script reads `localStorage['cm-theme']` (defaulting to the OS preference) and now understands three modes: light, dark, and the high-contrast “Accessibility+” profile. The toggle in `Header` cycles through these options while keeping multiple instances (desktop/mobile) in sync.
 - `PageTitle.astro` standardizes hero/eyebrow/intro blocks across pages.
 
 ### 5.2 Data Layer
@@ -51,7 +51,7 @@ This document condenses the moving parts of the Reflexive Coherence Model web po
 - `src/lib/types.ts` mirrors the GROQ results so pages/components stay typed.
 
 ### 5.3 Pages & Routing
-- **Static routes**: `index.astro`, `model.astro`, `glossary.astro`, `faq.astro`, `timeline.astro`, `papers.astro`, `notes.astro`, `blog/index.astro`, `privacy.astro`, `imprint.astro`.
+- **Static routes**: `index.astro`, `model.astro`, `glossary.astro`, `faq.astro`, `timeline.astro`, `papers.astro`, `notes.astro`, `blog/index.astro`, `privacy.astro`, `imprint.astro`, `accessibility.astro` (site statement + contact).
 - **Dynamic (SSG) routes**: `notes/[slug].astro` and `blog/[slug].astro` (pattern identical—`getStaticPaths` pulls slugs via GROQ, each page fetches specific content, returns 404 when missing). Add new dynamic sections following this template.
 - **Sticky in-page TOCs**: homepage, model, imprint, and privacy share the same pattern (mobile chips + desktop sticky sidebar). When adding another long-form page, copy this structure for consistency.
 - `papers.astro` mixes static metadata (primary preprint card) with Sanity-driven list placeholders; hook up `getPapers()` when structured paper documents are available.
@@ -116,4 +116,3 @@ Maintain GROQ queries (`src/lib/sanityQueries.ts`) whenever schema fields change
 - **Localization**: Single-language (EN) today. Multi-language support would require locale fields in Sanity and routing changes.
 
 This living doc should be updated whenever you add routes, schemas, or deployment steps so future collaborators can ramp up in minutes.
-

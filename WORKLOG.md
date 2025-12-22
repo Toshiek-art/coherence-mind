@@ -1,5 +1,11 @@
 # Worklog
 
+## 2025-12-19
+- Introduced a three-state theme system (light, dark, Accessibility+) with a synchronized toggle, global `theme-accessible` class handling, and high-contrast overrides in `src/styles/global.css`.
+- Added `/accessibility` (Astro page using BaseLayout) to document EAA/WCAG commitments, limitations, and a dedicated contact channel.
+- Raised color contrast across homepage elements (hero eyebrow, CTAs, cards, footer text, link accents) to satisfy Lighthouse/WCAG thresholds.
+- Updated `tsconfig.json` to exclude `/sanity` from Astro’s type check so CI/CD doesn’t need Studio dependencies during site builds.
+ 
 ## 2025-12-13
 - Added the sticky “On this page” navigation pattern (mobile chips + desktop sidebar) to both `/imprint` and `/privacy`, mirroring the home/model experience for consistent UX.
 - Verified that `/papers` remains discoverable via the homepage ecosystem card (the only direct internal link) and noted other references just target PDF assets.
