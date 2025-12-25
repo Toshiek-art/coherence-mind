@@ -8,6 +8,7 @@ This document condenses the moving parts of the Reflexive Coherence Model web po
 - **Sanity v4 Studio** lives in `/sanity`, defining structured content (concepts, notes, papers, etc.). Editors work in Studio; the Astro site consumes the published dataset.
 - **Portable Text** rendering is encapsulated in `src/components/RichTextRenderer.tsx`, ensuring consistent typography and link rules.
 - **Deployment target**: any static host (Vercel/Netlify/Cloudflare). `npm run build` emits `dist/` which already contains sitemap/robots and the generated pages.
+- **Canonical domain**: `https://www.coherencemind.net` is set via `astro.config.mjs#site` and used everywhere canonical URLs or robots/sitemap links need a fallback.
 
 ## 2. Repository Layout
 ```
@@ -86,7 +87,7 @@ This document condenses the moving parts of the Reflexive Coherence Model web po
 Maintain GROQ queries (`src/lib/sanityQueries.ts`) whenever schema fields change. Add new schema modules under `sanity/schemaTypes/` and append them to `schemaTypes` in `index.ts`.
 
 ### 6.3 Content → Frontend Mapping
-- **Homepage**: pulls `homepage.hero*`, top 3 `blogPost` entries, top 3 `note` entries.
+- **Homepage**: pulls `homepage.hero*`, top 3 `blogPost` entries, top 3 `note` entries, and renders the ecosystem card grid linking to Glossary, Timeline, Lab Notes, and Papers.
 - **Model**: `staticPage` with slug `model` supplies hero copy + `scopeEpistemicStatus` (rendered near the bottom) + optional `body/sections` for CMS-managed content.
 - **Glossary**: `concept` documents sorted alphabetically render term cards with definitions and related concept chips.
 - **FAQ**: `faq` entries grouped by `category` in `getFaqByCategory()`.

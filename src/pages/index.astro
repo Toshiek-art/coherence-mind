@@ -347,21 +347,11 @@ const formatDate = (value?: string) => {
                 <div class="mt-6 flex flex-wrap items-center gap-4 text-sm">
                   <span class="text-slate-500 dark:text-slate-400">Formal paper:</span>
 
-                  <a
-                    href="https://doi.org/10.5281/zenodo.17342603"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="text-sky-700 underline underline-offset-4 hover:text-sky-600 dark:text-sky-300 dark:hover:text-sky-200"
-                  >
+                  <a href="https://doi.org/10.5281/zenodo.17342603" target="_blank" rel="noopener noreferrer" class="link-accent">
                     Read on Zenodo →
                   </a>
 
-                  <a
-                    href="/papers/rcm.pdf"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="text-sky-700 underline underline-offset-4 hover:text-sky-600 dark:text-sky-300 dark:hover:text-sky-200"
-                  >
+                  <a href="/papers/rcm.pdf" target="_blank" rel="noopener noreferrer" class="link-accent">
                     Open PDF →
                   </a>
                 </div>
@@ -393,10 +383,7 @@ const formatDate = (value?: string) => {
                   <div class="rounded-2xl border border-slate-200 bg-white/80 p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900/40">
                     <h3 class="mb-2 font-medium text-slate-900 dark:text-slate-100">{card.title}</h3>
                     <p class="mb-3 text-slate-600 dark:text-slate-300">{card.summary}</p>
-                    <a
-                      href={card.href}
-                      class="text-xs text-sky-700 transition hover:text-sky-600 dark:text-sky-300 dark:hover:text-sky-200"
-                    >
+                    <a href={card.href} class="link-card text-xs">
                       {card.cta}
                     </a>
                   </div>
@@ -422,10 +409,7 @@ const formatDate = (value?: string) => {
                     </p>
                     <h3 class="mb-2 font-medium text-slate-900 dark:text-slate-100">{note.title}</h3>
                     <p class="text-xs text-slate-600 dark:text-slate-300">{note.description}</p>
-                    <a
-                      href={note.href}
-                      class="mt-3 inline-block text-xs text-sky-700 transition hover:text-sky-600 dark:text-sky-300 dark:hover:text-sky-200"
-                    >
+                    <a href={note.href} class="mt-3 inline-block link-card text-xs">
                       {note.cta}
                     </a>
                   </article>

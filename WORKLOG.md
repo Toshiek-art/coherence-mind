@@ -1,5 +1,10 @@
 # Worklog
 
+## 2025-12-22
+- Re-pointed the site’s canonical domain to `https://www.coherencemind.net` via `astro.config.mjs`, updated canonical fallbacks on blog/note detail pages, and regenerated `public/robots.txt` so sitemap URLs match the new host.
+- Added the Lab Notes card to the homepage Ecosystem section to make `/notes` discoverable without relying on secondary CTAs.
+- Refreshed TECH_DOC to capture the canonical-domain change plus the expanded homepage ecosystem grid.
+
 ## 2025-12-19
 - Introduced a three-state theme system (light, dark, Accessibility+) with a synchronized toggle, global `theme-accessible` class handling, and high-contrast overrides in `src/styles/global.css`.
 - Added `/accessibility` (Astro page using BaseLayout) to document EAA/WCAG commitments, limitations, and a dedicated contact channel.

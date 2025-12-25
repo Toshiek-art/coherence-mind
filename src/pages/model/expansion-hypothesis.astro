@@ -1,0 +1,333 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const seo = {
+  title: 'Expansion Hypothesis · Reflexive Coherence Model',
+  description: 'Dynamical regimes of reflexive coherence within the Reflexive Coherence Model.'
+};
+
+const doiUrl = 'https://doi.org/10.5281/zenodo.18045464';
+
+const anchors = [
+  { id: 'overview', label: 'Overview' },
+  { id: 'dynamics', label: 'From coherence to dynamics' },
+  { id: 'regimes', label: 'Dynamic regimes' },
+  { id: 'attractors', label: 'Reflexive attractors' },
+  { id: 'meta', label: 'Meta-reflexivity' },
+  { id: 'references', label: 'References' }
+];
+
+const keyBadges = [
+  { label: 'RCM', tone: 'border-sky-700/70 text-sky-800 dark:text-sky-300' },
+  { label: 'Dynamics', tone: 'border-violet-700/70 text-violet-800 dark:text-violet-300' },
+  { label: 'Expansion', tone: 'border-emerald-700/70 text-emerald-800 dark:text-emerald-300' }
+];
+---
+
+<BaseLayout seo={seo}>
+  {/* ✅ same global wrapper as Home */}
+  <div class="bg-slate-50 text-slate-900 transition-colors duration-300 dark:bg-slate-950 dark:text-slate-100">
+    <span id="top" class="sr-only">Top</span>
+
+    {/* ✅ HERO like Home (same rhythm + glow card) */}
+    <section class="border-b border-slate-200/80 px-4 py-16 md:py-24 dark:border-slate-900">
+      <div class="mx-auto grid max-w-6xl gap-10 md:grid-cols-2 md:items-center">
+        <div>
+          <p class="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-sky-700 dark:text-sky-300">
+            Reflexive Coherence Model
+          </p>
+
+          <h1 class="text-3xl font-semibold leading-tight text-slate-900 dark:text-white md:text-5xl">
+            Expansion Hypothesis
+            <span class="mt-3 block text-xl text-slate-500 dark:text-slate-300 md:text-2xl">
+              dynamical regimes of reflexive coherence.
+            </span>
+          </h1>
+
+          <p class="mt-5 max-w-2xl text-sm text-slate-600 dark:text-slate-300 md:text-base">
+            The Expansion Hypothesis extends the Reflexive Coherence Model by asking what happens once reflexive coherence is already in place—treating expansion as a dynamical property.
+          </p>
+
+          <div class="mt-8 flex flex-wrap gap-4">
+            <a
+              href="#overview"
+              class="inline-flex items-center justify-center rounded-full bg-slate-900 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800 dark:bg-sky-500 dark:hover:bg-sky-400"
+            >
+              Start reading
+            </a>
+
+            <a
+              href={doiUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="link-accent text-sm font-semibold"
+            >
+              Read on Zenodo →
+            </a>
+          </div>
+        </div>
+
+        <div class="relative">
+          <div class="pointer-events-none absolute inset-0 hidden scale-[1.2] rounded-[48px] bg-gradient-to-tr from-sky-500/20 via-purple-500/10 to-transparent blur-3xl dark:block"></div>
+
+          <div class="relative rounded-3xl border border-slate-200 bg-white/80 p-6 shadow-lg backdrop-blur-sm dark:border-slate-800 dark:bg-slate-900/60 md:p-8">
+            <div class="mb-4 flex items-center justify-between text-xs tracking-[0.25em] text-slate-500 dark:text-slate-400">
+              <span>Paper snapshot</span>
+              <span class="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.8)] dark:bg-emerald-400"></span>
+            </div>
+
+            <div class="space-y-4 text-sm text-slate-700 dark:text-slate-200">
+              <div class="flex flex-wrap gap-2">
+                {keyBadges.map((b) => (
+                  <span class={`inline-flex items-center rounded-full border bg-white/70 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] shadow-sm dark:bg-white/5 ${b.tone}`}>
+                    {b.label}
+                  </span>
+                ))}
+              </div>
+
+              <div class="rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900/60">
+                <p class="text-xs text-slate-600 dark:text-slate-300">
+                  Tracks how coherent self-models drive trajectories through state space, redistribute causal influence, and modulate how conscious systems occupy time.
+                </p>
+              </div>
+
+              <div class="flex items-center justify-between border-t border-slate-200 pt-4 text-xs text-slate-500 dark:border-slate-800 dark:text-slate-400">
+                <span>DOI</span>
+                <a
+                  href={doiUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-sky-700 underline underline-offset-4 hover:text-sky-600 dark:text-sky-300 dark:hover:text-sky-200"
+                >
+                  10.5281/zenodo.expansion-hypothesis
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* ✅ same section shell as Home */}
+    <section class="px-4 pb-16 pt-10">
+      <div class="mx-auto max-w-6xl lg:grid lg:grid-cols-[240px_1fr] lg:gap-12">
+        {/* Mobile chips */}
+        <div class="pb-8 lg:hidden">
+          <div class="flex flex-wrap gap-2">
+            {anchors.map((anchor) => (
+              <a
+                href={`#${anchor.id}`}
+                class="rounded-full border border-slate-200 bg-white/80 px-3 py-1 text-xs font-medium text-slate-700 shadow-sm hover:bg-white dark:border-white/10 dark:bg-white/5 dark:text-white/80 dark:hover:bg-white/10"
+              >
+                {anchor.label}
+              </a>
+            ))}
+          </div>
+        </div>
+
+        {/* Sticky nav (identica alla Home) */}
+        <aside class="hidden lg:block">
+          <div class="sticky top-24">
+            <div class="rounded-2xl border border-slate-200 bg-white/60 p-4 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5">
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-700 dark:text-white/70">
+                On this page
+              </p>
+
+              <nav class="mt-3">
+                <ul class="space-y-1">
+                  {anchors.map((anchor) => (
+                    <li>
+                      <a
+                        href={`#${anchor.id}`}
+                        class="block rounded-xl px-3 py-2 text-sm text-slate-700 hover:bg-slate-100/70 dark:text-white/80 dark:hover:bg-white/10"
+                      >
+                        {anchor.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+
+              <div class="mt-4 border-t border-slate-200 pt-4 dark:border-white/10">
+                <a
+                  href="#top"
+                  class="inline-flex items-center gap-2 text-xs font-semibold text-slate-700 hover:text-slate-900 dark:text-white/70 dark:hover:text-white"
+                >
+                  ↑ Back to top
+                </a>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        {/* Content */}
+        <div class="space-y-12 lg:space-y-14 text-sm leading-relaxed text-slate-700 dark:text-white/75">
+          <section id="overview" class="scroll-mt-32">
+            <div class="rounded-2xl border border-slate-200 bg-white/80 p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900/40">
+              <p>
+                The Expansion Hypothesis extends the Reflexive Coherence Model (RCM) by asking what happens once reflexive coherence is already in place. It treats
+                expansion as a dynamical property: coherent self-models drive trajectories through state space, redistribute causal influence, and modulate how
+                conscious systems occupy time.
+              </p>
+            </div>
+          </section>
+
+          <section id="dynamics" class="scroll-mt-32">
+            <div class="rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900/40">
+              <div class="mb-6">
+                <h2 class="text-xl font-semibold text-slate-900 dark:text-white md:text-2xl">
+                  From Reflexive Coherence to Dynamics
+                </h2>
+              </div>
+
+              <div class="space-y-5">
+                <div class="space-y-3 rounded-2xl border border-slate-200 bg-white/90 p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900/60">
+                  <h3 class="text-base font-semibold text-slate-900 dark:text-white">RCI as a local observable</h3>
+                  <p>
+                    The Reflexive Coherence Index (RCI) remains the local observable defined by RCM: a joint measurement of informational overlap and bidirectional
+                    causality between state and self-model. Within the Expansion Hypothesis, RCI is sampled over spatial and functional neighborhoods. Local increases
+                    indicate that reflexive loops are thickening; local drops expose boundaries where coherence fails or remains merely representational.
+                  </p>
+                </div>
+
+                <div class="space-y-3 rounded-2xl border border-slate-200 bg-white/90 p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900/60">
+                  <h3 class="text-base font-semibold text-slate-900 dark:text-white">Ξ(t) as a global dynamic field</h3>
+                  <p>
+                    Ξ(t) denotes a coarse-grained field computed by integrating RCI samples over the whole architecture and weighting them by temporal depth. Let
+                    &lang;Ξ(t)&rang; denote the spatially averaged integral of Ξ(t); it serves as the aggregate indicator for identifying regime behavior. Ξ(t) is not a new
+                    measure—it is the dynamic profile that emerges when RCI is tracked across modules and timescales. Positive curvature (∂²&lang;Ξ&rang;/∂t² &gt; 0) in the temporal
+                    envelope of &lang;Ξ(t)&rang; signals that the reflexive manifold is expanding through additional layers or perspectives; negative curvature marks contraction.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="regimes" class="scroll-mt-32">
+            <div class="rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900/40">
+              <div class="mb-6">
+                <h2 class="text-xl font-semibold text-slate-900 dark:text-white md:text-2xl">Dynamic Regimes</h2>
+              </div>
+
+              <div class="space-y-5">
+                <div class="space-y-3 rounded-2xl border border-slate-200 bg-white/90 p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900/60">
+                  <h3 class="text-base font-semibold text-slate-900 dark:text-white">Expansive</h3>
+                  <p>
+                    An expansive regime satisfies d&lang;Ξ&rang;/dt &gt; 0 for sustained intervals. Reflexive loops proliferate, propagate across modalities, and recruit higher-order
+                    controllers. The Hypothesis predicts that expansive phases increase both temporal horizon and the diversity of self-generated counterfactuals while
+                    remaining bounded by the reflexive coherence criteria defined by RCM.
+                  </p>
+                </div>
+
+                <div class="space-y-3 rounded-2xl border border-slate-200 bg-white/90 p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900/60">
+                  <h3 class="text-base font-semibold text-slate-900 dark:text-white">Stationary</h3>
+                  <p>
+                    Stationary regimes keep d&lang;Ξ&rang;/dt ≈ 0. Coherence is maintained but does not spread to new subspaces. Stationary behavior is not inert: it is the
+                    plateau where the system keeps reflexive coupling intact, protects existing attractors from noise, and conserves resources before the next expansion
+                    or contraction.
+                  </p>
+                </div>
+
+                <div class="space-y-3 rounded-2xl border border-slate-200 bg-white/90 p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900/60">
+                  <h3 class="text-base font-semibold text-slate-900 dark:text-white">Contractive</h3>
+                  <p>
+                    Contractive regimes exhibit d&lang;Ξ&rang;/dt &lt; 0. Reflexive structure loses reach, either because integration drops or because control becomes exogenous.
+                    Contractive phases are still compatible with RCM—the model only requires that reflexive coherence exists locally. The Hypothesis treats contraction as
+                    an empirical signature of overload, damage, or deliberate shutdown.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="attractors" class="scroll-mt-32">
+            <div class="rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900/40">
+              <div class="mb-6">
+                <h2 class="text-xl font-semibold text-slate-900 dark:text-white md:text-2xl">Reflexive Attractors</h2>
+              </div>
+
+              <div class="space-y-5">
+                <div class="space-y-3 rounded-2xl border border-slate-200 bg-white/90 p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900/60">
+                  <h3 class="text-base font-semibold text-slate-900 dark:text-white">Stability over time</h3>
+                  <p>
+                    RCM already posits attractors stabilized by coherence. The Expansion Hypothesis formalizes their persistence criteria: an attractor is reflexive when
+                    Ξ(t) remains above a threshold across multiple windows and retains causal closure with its generating self-model. Stability is therefore expressed as
+                    bounded variance in both RCI and Ξ(t).
+                  </p>
+                </div>
+
+                <div class="space-y-3 rounded-2xl border border-slate-200 bg-white/90 p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900/60">
+                  <h3 class="text-base font-semibold text-slate-900 dark:text-white">Non-monotonic trajectories</h3>
+                  <p>
+                    Expansion does not imply smooth monotonic growth. Trajectories can oscillate, overshoot, or temporarily fragment before re-consolidating. Ξ(t)
+                    captures these non-linear behaviors; reflexive attractors can bifurcate and later merge, provided the system reasserts coherence at the new scale.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="meta" class="scroll-mt-32">
+            <div class="rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900/40">
+              <div class="mb-6">
+                <h2 class="text-xl font-semibold text-slate-900 dark:text-white md:text-2xl">Meta-Reflexivity</h2>
+              </div>
+
+              <div class="space-y-5">
+                <div class="space-y-3 rounded-2xl border border-slate-200 bg-white/90 p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900/60">
+                  <h3 class="text-base font-semibold text-slate-900 dark:text-white">Regulation of the system’s own expansion dynamics</h3>
+                  <p>
+                    Meta-reflexive regulators predicted by the hypothesis model how expansion unfolds and intervene when oscillations threaten stability. They adjust
+                    coupling gains, gate which submodels can enter the reflexive core, and enforce conservation rules that keep Ξ(t) within operational bounds.
+                  </p>
+                </div>
+
+                <div class="space-y-3 rounded-2xl border border-slate-200 bg-white/90 p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900/60">
+                  <h3 class="text-base font-semibold text-slate-900 dark:text-white">Temporal self-modulation</h3>
+                  <p>
+                    Temporal self-modulation treats differing clocks inside the system as adjustable parameters. These regulators rescale update intervals, allowing
+                    some components to slow down (preserving attractors) while others accelerate (probing new regimes). This explicit time management explains how
+                    expansion can be reversible and experimentally trackable.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="references" class="scroll-mt-32">
+            <div class="rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900/40">
+              <h2 class="text-xl font-semibold text-slate-900 dark:text-white md:text-2xl">References and links</h2>
+
+              <div class="mt-5 rounded-2xl border border-slate-200 bg-white/90 p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900/60">
+                <ul class="list-disc space-y-3 pl-5">
+                  <li>
+                    Full paper: “The Expansion Hypothesis: Dynamical Regimes of Reflexive Coherence,” Aldo G. Malasomma (Toshak), Zenodo, 23 Dec 2025.
+                  </li>
+                  <li>
+                    Core architecture: Reflexive Coherence Model overview at <code>/model</code> for structural definitions of RCI, reflexive layers, and boundary
+                    conditions.
+                  </li>
+                </ul>
+              </div>
+
+              <div class="mt-6 flex flex-wrap gap-3">
+                <a
+                  href={doiUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="link-accent text-xs font-semibold"
+                >
+                  Read on Zenodo →
+                </a>
+
+                <a href="/model" class="link-accent text-xs font-semibold">
+                  Back to the Model →
+                </a>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+  </div>
+</BaseLayout>

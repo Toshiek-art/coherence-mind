@@ -18,6 +18,17 @@ const primaryPaper = {
   // Se non hai ancora il PDF sul sito, metti null e il bottone sparisce.
   pdfUrl: '/papers/rcm-v1.1.pdf'
 };
+
+const expansionPaper = {
+  title: 'The Expansion Hypothesis: Dynamical Regimes of Reflexive Coherence',
+  doi: '10.5281/zenodo.18045464',
+  doiUrl: 'https://doi.org/10.5281/zenodo.18045464',
+  year: '2025',
+  venue: 'Zenodo (preprint)',
+  licenseLabel: 'CC BY-NC-ND 4.0',
+  licenseNote: 'Attribution required · NonCommercial · NoDerivatives',
+  pdfUrl: '/papers/teh-v1.1.pdf'
+};
 ---
 
 <BaseLayout seo={seo}>
@@ -65,21 +76,69 @@ const primaryPaper = {
               </div>
             </div>
 
-            <div class="mt-5 flex flex-wrap gap-2">
+            <div class="mt-5 flex flex-wrap gap-4 text-sm">
               <a
                 href={primaryPaper.doiUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                class="inline-flex items-center rounded-full border border-slate-200 bg-white/70 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-white dark:border-white/10 dark:bg-white/10 dark:text-white/80 dark:hover:bg-white/15"
+                class="link-accent font-semibold"
               >
                 Read on Zenodo →
               </a>
 
               {primaryPaper.pdfUrl ? (
-                <a
-                  href={primaryPaper.pdfUrl}
-                  class="inline-flex items-center rounded-full border border-slate-200 bg-white/70 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-white dark:border-white/10 dark:bg-white/10 dark:text-white/80 dark:hover:bg-white/15"
-                >
+                <a href={primaryPaper.pdfUrl} class="link-accent font-semibold">
+                  Open PDF →
+                </a>
+              ) : null}
+            </div>
+          </div>
+
+          {/* Expansion hypothesis card */}
+          <div class="rounded-3xl border border-slate-200 bg-white/60 p-6 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5">
+            <div class="flex flex-wrap items-start justify-between gap-4">
+              <div class="max-w-2xl">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-600 dark:text-white/60">
+                  Extension · {expansionPaper.venue}
+                </p>
+                <h2 class="mt-2 text-xl font-semibold text-slate-900 dark:text-white">
+                  {expansionPaper.title}
+                </h2>
+                <p class="mt-2 text-sm text-slate-600 dark:text-white/70">
+                  DOI:{' '}
+                  <a
+                    href={expansionPaper.doiUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="underline decoration-slate-400 underline-offset-2 hover:decoration-slate-700 dark:decoration-white/30 dark:hover:decoration-white/60"
+                  >
+                    {expansionPaper.doi}
+                  </a>
+                </p>
+              </div>
+
+              <div class="flex flex-col items-start gap-2">
+                <span class="rounded-full border border-slate-200 bg-white/70 px-3 py-1 text-xs font-semibold text-slate-700 dark:border-white/10 dark:bg-white/10 dark:text-white/80">
+                  {expansionPaper.licenseLabel}
+                </span>
+                <p class="text-xs text-slate-500 dark:text-white/50">
+                  {expansionPaper.licenseNote}
+                </p>
+              </div>
+            </div>
+
+            <div class="mt-5 flex flex-wrap gap-4 text-sm">
+              <a
+                href={expansionPaper.doiUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="link-accent font-semibold"
+              >
+                Read on Zenodo →
+              </a>
+
+              {expansionPaper.pdfUrl ? (
+                <a href={expansionPaper.pdfUrl} class="link-accent font-semibold">
                   Open PDF →
                 </a>
               ) : null}
@@ -96,6 +155,11 @@ const primaryPaper = {
             <div class="mt-4 rounded-2xl border border-slate-200 bg-white/70 p-4 text-sm text-slate-700 dark:border-white/10 dark:bg-white/10 dark:text-white/80">
               Malasomma, A. G. ({primaryPaper.year}). <em>{primaryPaper.title}</em>. Zenodo. DOI:{' '}
               {primaryPaper.doi}
+            </div>
+
+            <div class="mt-3 rounded-2xl border border-slate-200 bg-white/70 p-4 text-sm text-slate-700 dark:border-white/10 dark:bg-white/10 dark:text-white/80">
+              Malasomma, A. G. ({expansionPaper.year}). <em>{expansionPaper.title}</em>. Zenodo. DOI:{' '}
+              {expansionPaper.doi}
             </div>
           </div>
 
